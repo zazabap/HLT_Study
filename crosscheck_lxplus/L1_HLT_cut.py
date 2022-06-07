@@ -130,7 +130,7 @@ list_order = [
         "p_{T}^{#tau} Subleading"
 ]
 
-def tree_loop_cut( input_root, t ):
+def tree_loop_cut_pt( input_root, t ):
     for k in range(len(kL)):
         if kL[k] == 1:
             inFile = ROOT.TFile.Open( input_root ,"READ")
@@ -142,123 +142,149 @@ def tree_loop_cut( input_root, t ):
     hlteta = []
     L1 = "N/A"
     HLT = "N/A"
-#####################################################################################
-###TrigMatched_Taus_HLTptfl##########################################################
+###################################################################################
+#TrigMatched_Taus_HLTptfl##########################################################
 
-#     hist_onhltptrnn = ROOT.TH1D("onhltpt_rnn","",50,0,1)
-#     hist_onhltptprong = ROOT.TH1D("onhltpt_prong","",10,0,10)
-#     hist_onhltptpt_r = ROOT.TH1D("onhltptpt_r","",50,0,50)
-#     hist_onhltptpt_lead_r = ROOT.TH1D("onhltptpt_lead_r","",50,0,50)
-#     hist_onhltptpt_sublead_r = ROOT.TH1D("onhltptpt_sublead_r","",50,0,50)
-#     hist_onhltptdeltaR = ROOT.TH1D("onhltptdeltaR", "",50, -1, 4)
+    hist_onhltptrnn = ROOT.TH1D("onhltpt_rnn","",50,0,1)
+    hist_onhltptprong = ROOT.TH1D("onhltpt_prong","",10,0,10)
+    hist_onhltptpt_r = ROOT.TH1D("onhltptpt_r","",50,0,50)
+    hist_onhltptpt_lead_r = ROOT.TH1D("onhltptpt_lead_r","",50,0,50)
+    hist_onhltptpt_sublead_r = ROOT.TH1D("onhltptpt_sublead_r","",50,0,50)
+    hist_onhltptdeltaR = ROOT.TH1D("onhltptdeltaR", "",50, -1, 4)
 
-#     hist_L1_onhltptrnn = ROOT.TH1D("L1_onhltpt_rnn","",50,0,1)
-#     hist_L1_onhltptprong = ROOT.TH1D("L1_onhltpt_prong","",10,0,10)
-#     hist_L1_onhltptpt_r = ROOT.TH1D("L1_onhltptpt_r","",50,0,50)
-#     hist_L1_onhltptpt_lead_r = ROOT.TH1D("L1_onhltptpt_lead_r","",50,0,50)
-#     hist_L1_onhltptpt_sublead_r = ROOT.TH1D("L1_onhltptpt_sublead_r","",50,0,50)
-#     hist_L1_onhltptdeltaR = ROOT.TH1D("L1_onhltptdeltaR", "",50, -1, 4)
+    hist_L1_onhltptrnn = ROOT.TH1D("L1_onhltpt_rnn","",50,0,1)
+    hist_L1_onhltptprong = ROOT.TH1D("L1_onhltpt_prong","",10,0,10)
+    hist_L1_onhltptpt_r = ROOT.TH1D("L1_onhltptpt_r","",50,0,50)
+    hist_L1_onhltptpt_lead_r = ROOT.TH1D("L1_onhltptpt_lead_r","",50,0,50)
+    hist_L1_onhltptpt_sublead_r = ROOT.TH1D("L1_onhltptpt_sublead_r","",50,0,50)
+    hist_L1_onhltptdeltaR = ROOT.TH1D("L1_onhltptdeltaR", "",50, -1, 4)
 
-#     hist_HLT_onhltptrnn = ROOT.TH1D("HLT_onhltpt_rnn","",50,0,1)
-#     hist_HLT_onhltptprong = ROOT.TH1D("HLT_onhltpt_prong","",10,0,10)
-#     hist_HLT_onhltptpt_r = ROOT.TH1D("HLT_onhltptpt_r","",50,0,50)
-#     hist_HLT_onhltptpt_lead_r = ROOT.TH1D("HLT_onhltptpt_lead_r","",50,0,50)
-#     hist_HLT_onhltptpt_sublead_r = ROOT.TH1D("HLT_onhltptpt_sublead_r","",50,0,50)
-#     hist_HLT_onhltptdeltaR = ROOT.TH1D("HLT_onhltptdeltaR", "",50, -1, 4)
+    hist_HLT_onhltptrnn = ROOT.TH1D("HLT_onhltpt_rnn","",50,0,1)
+    hist_HLT_onhltptprong = ROOT.TH1D("HLT_onhltpt_prong","",10,0,10)
+    hist_HLT_onhltptpt_r = ROOT.TH1D("HLT_onhltptpt_r","",50,0,50)
+    hist_HLT_onhltptpt_lead_r = ROOT.TH1D("HLT_onhltptpt_lead_r","",50,0,50)
+    hist_HLT_onhltptpt_sublead_r = ROOT.TH1D("HLT_onhltptpt_sublead_r","",50,0,50)
+    hist_HLT_onhltptdeltaR = ROOT.TH1D("HLT_onhltptdeltaR", "",50, -1, 4)
 
-#     # Loop over entries
-#     for entry in entries:
-#         tree.GetEntry(entry)
-#         L1_1 = getattr(tree, "L1_J25")
-#         L1 = "L1_J25"
-#         # Bit confused about this point of trigger use 
-#         if taus[t] == "r22_Pass" or taus[t] == "Tau0_Pass":
-#             HLT_1 = getattr(tree, "HLT_J25_r22")
-#             HLT = "HLT_J25_r22"
-#         elif taus[t] == "r22_PassFail" or taus[t] == "Tau0_PassFail":
-#             HLT_1 = getattr(tree, "HLT_J25_Tau0")
-#             HLT = "HLT_J25_Tau0"
-        
-#         # Loop over without cut 
-#         for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
-#             hist_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
-#             if(i==0):  
-#                 hist_onhltptpt_lead_r.Fill(
-#                     tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-#             if(i==1):
-#                 hist_onhltptpt_sublead_r.Fill(
-#                     tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
-#                 vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
-#                 vec1= tree.TrigMatched_Taus_HLTptfl[1].Vect()
-#                 hist_onhltptdeltaR.Fill(vec1.DeltaR(vec0))  
-#         for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
-#             hist_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
-#         for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
-#             hist_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
+    # Loop over entries
+    for entry in entries:
+        tree.GetEntry(entry)
+        L1_1 = getattr(tree, "L1_J25")
+        L1 = "L1_J25"
+        # Bit confused about this point of trigger use 
+        if taus[t] == "r22_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "r22_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "Tau0_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J20_Tau0"
+        elif taus[t] == "Tau0_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J20_Tau0"
 
-#         # Loop over with L1 cut 
-#         if L1_1:
-#             for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
-#                 hist_L1_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
-#                 if(i==0):
-#                     hist_L1_onhltptpt_lead_r.Fill(
-#                         tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-#                 if(i==1):
-#                     hist_L1_onhltptpt_sublead_r.Fill(
-#                         tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
-#                     # Fill DeltaR
-#                     vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
-#                     vec1= tree.TrigMatched_Taus_HLTptfl[1].Vect()
-#                     hist_L1_onhltptdeltaR.Fill(vec0.DeltaR(vec1))
-#             for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
-#                 hist_L1_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
-#             for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
-#                 hist_L1_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
-#             # Loop over with HLT cut 
-#             if HLT_1:
-#                 for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
-#                     hist_HLT_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
-#                     if(i==0):
-#                         hist_HLT_onhltptpt_lead_r.Fill(tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-#                     if(i==1):
-#                         hist_HLT_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
-#                         # Fill DeltaR
-#                         vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
-#                         vec1= tree.TrigMatched_Taus_HLTptfl[1].Vect()
-#                         hist_HLT_onhltptdeltaR.Fill(vec0.DeltaR(vec1))
-#                 for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
-#                     hist_HLT_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
-#                 for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
-#                     hist_HLT_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
+        # Loop over without cut 
+        for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
+            hist_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
+            if(i==0):  
+                hist_onhltptpt_lead_r.Fill(
+                    tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
+            if(i==1):
+                hist_onhltptpt_sublead_r.Fill(
+                    tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
+                vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
+                vec1= tree.TrigMatched_Taus_HLTptfl[1].Vect()
+                hist_onhltptdeltaR.Fill(vec1.DeltaR(vec0))  
+        for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
+            hist_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
+        for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
+            hist_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
+
+        # Loop over with L1 cut 
+        if L1_1:
+            for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
+                hist_L1_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
+                if(i==0):
+                    hist_L1_onhltptpt_lead_r.Fill(
+                        tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
+                if(i==1):
+                    hist_L1_onhltptpt_sublead_r.Fill(
+                        tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
+                    # Fill DeltaR
+                    vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
+                    vec1= tree.TrigMatched_Taus_HLTptfl[1].Vect()
+                    hist_L1_onhltptdeltaR.Fill(vec0.DeltaR(vec1))
+            for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
+                hist_L1_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
+            for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
+                hist_L1_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
+            # Loop over with HLT cut 
+            if HLT_1:
+                for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
+                    hist_HLT_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
+                    if(i==0):
+                        hist_HLT_onhltptpt_lead_r.Fill(tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
+                    if(i==1):
+                        hist_HLT_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
+                        # Fill DeltaR
+                        vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
+                        vec1= tree.TrigMatched_Taus_HLTptfl[1].Vect()
+                        hist_HLT_onhltptdeltaR.Fill(vec0.DeltaR(vec1))
+                for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
+                    hist_HLT_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
+                for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
+                    hist_HLT_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
     
-#     hltpt.append(hist_onhltptrnn)
-#     hltpt.append(hist_onhltptprong)
-#     hltpt.append(hist_onhltptdeltaR)
-#     hltpt.append(hist_onhltptpt_lead_r)
-#     hltpt.append(hist_onhltptpt_sublead_r)
+    hltpt.append(hist_onhltptrnn)
+    hltpt.append(hist_onhltptprong)
+    hltpt.append(hist_onhltptdeltaR)
+    hltpt.append(hist_onhltptpt_lead_r)
+    hltpt.append(hist_onhltptpt_sublead_r)
 
-#     hltpt.append(hist_L1_onhltptrnn)
-#     hltpt.append(hist_L1_onhltptprong)
-#     hltpt.append(hist_L1_onhltptdeltaR)
-#     hltpt.append(hist_L1_onhltptpt_lead_r)
-#     hltpt.append(hist_L1_onhltptpt_sublead_r)
+    hltpt.append(hist_L1_onhltptrnn)
+    hltpt.append(hist_L1_onhltptprong)
+    hltpt.append(hist_L1_onhltptdeltaR)
+    hltpt.append(hist_L1_onhltptpt_lead_r)
+    hltpt.append(hist_L1_onhltptpt_sublead_r)
 
-#     hltpt.append(hist_HLT_onhltptrnn)
-#     hltpt.append(hist_HLT_onhltptprong)
-#     hltpt.append(hist_HLT_onhltptdeltaR)
-#     hltpt.append(hist_HLT_onhltptpt_lead_r)
-#     hltpt.append(hist_HLT_onhltptpt_sublead_r)
-# ######################################################################################
+    hltpt.append(hist_HLT_onhltptrnn)
+    hltpt.append(hist_HLT_onhltptprong)
+    hltpt.append(hist_HLT_onhltptdeltaR)
+    hltpt.append(hist_HLT_onhltptpt_lead_r)
+    hltpt.append(hist_HLT_onhltptpt_sublead_r)
+######################################################################################
 
-#     for i in range(5):
-#         #posleg(leg_pos[i][0], leg_pos[i][1], leg_pos[i][2])
-#         hist_print_compare([hltpt[i],
-#                             hltpt[i+5], 
-#                             hltpt[i+10]],
-#                 ["N/A", L1,  HLT],
-#                 list_order[i], t)
+    for i in range(5):
+        #posleg(leg_pos[i][0], leg_pos[i][1], leg_pos[i][2])
+        hist_print_compare([hltpt[i],
+                            hltpt[i+5], 
+                            hltpt[i+10]],
+                ["N/A", L1,  HLT],
+                list_order[i], t)
+        a = [   int(hltpt[i].GetEntries()), 
+                int(hltpt[i+5].GetEntries()), 
+                int(hltpt[i+10].GetEntries())]
+        print("Efficiency HLT/L1", a[2]/a[1])
+        b = [   hltpt[i].GetName(), 
+                hltpt[i+5].GetName(), 
+                hltpt[i+10].GetName()]
+        print("Efficiency "+b[2]+"HLT/L1", a[2]/a[1])
+        
+def tree_loop_cut_eta( input_root, t ):
+    for k in range(len(kL)):
+        if kL[k] == 1:
+            inFile = ROOT.TFile.Open( input_root ,"READ")
 
-####TrigMatched_Taus_HLTetafl##################################################################################
+    print("Start Looping ", taus[t])
+    tree = inFile.Get("analysis")
+    entries = range(tree.GetEntries())
+    hltpt = []
+    hlteta = []
+    L1 = "N/A"
+    HLT = "N/A"
+###TrigMatched_Taus_HLTetafl##################################################################################
     hist_onhltetarnn = ROOT.TH1D("onhlteta_rnn","",50,0,1)
     hist_onhltetaprong = ROOT.TH1D("onhlteta_prong","",10,0,10)
     hist_onhltetapt_r = ROOT.TH1D("onhltetapt_r","",50,0,50)
@@ -286,10 +312,16 @@ def tree_loop_cut( input_root, t ):
         L1_2 = getattr(tree, "L1_ETA25")
         L1 = "L1_ETA25"
         # Bit confused about this point of trigger use 
-        if taus[t] == "r22_Pass" or taus[t] == "Tau0_Pass":
+        if taus[t] == "r22_Pass":
             HLT_2 = getattr(tree, "HLT_ETA25_r22")
             HLT = "HLT_ETA25_r22"
-        elif taus[t] == "r22_PassFail" or taus[t] == "Tau0_PassFail":
+        elif taus[t] == "r22_PassFail":
+            HLT_2 = getattr(tree, "HLT_ETA25_r22")
+            HLT = "HLT_ETA25_r22"
+        elif taus[t] == "Tau0_Pass":
+            HLT_2 = getattr(tree, "HLT_ETA25_Tau0")
+            HLT = "HLT_ETA25_Tau0"
+        elif taus[t] == "Tau0_PassFail":
             HLT_2 = getattr(tree, "HLT_ETA25_Tau0")
             HLT = "HLT_ETA25_Tau0"
 
@@ -361,18 +393,26 @@ def tree_loop_cut( input_root, t ):
     hlteta.append(hist_HLT_onhltetapt_sublead_r)
 ######################################################################################
     for i in range(5):
-        #posleg(leg_pos[i][0], leg_pos[i][1], leg_pos[i][2])
+        posleg(leg_pos[i][0], leg_pos[i][1], leg_pos[i][2])
         hist_print_compare([hlteta[i],
                             hlteta[i+5], 
                             hlteta[i+10]],
                 ["N/A", L1,  HLT],
                 list_order[i], t)
+        a = [   int(hlteta[i].GetEntries()), 
+                int(hlteta[i+5].GetEntries()), 
+                int(hlteta[i+10].GetEntries())]
+        b = [   hlteta[i].GetName(), 
+                hlteta[i+5].GetName(), 
+                hlteta[i+10].GetName()]
+        print("Efficiency "+b[2]+"HLT/L1", a[2]/a[1])
 
 def main():
     # tree_loop_cut( "r22_Pass.root", 0)
     # tree_loop_cut("r22_PassFail.root", 1)
     # tree_loop_cut("Tau0_Pass.root", 2)
-    tree_loop_cut("Tau0_PassFail.root", 3)
+    # tree_loop_cut_pt("Tau0_PassFail.root", 3)
+    tree_loop_cut_eta("Tau0_Pass.root", 2)
 
 if __name__ == "__main__" :
     print("Hello, Start Ploting for HLT")
@@ -388,4 +428,3 @@ if __name__ == "__main__" :
 #   could not observe in the plots 
 #   by other person. 
 
- 
