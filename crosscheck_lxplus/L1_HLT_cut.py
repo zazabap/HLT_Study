@@ -271,7 +271,7 @@ def tree_loop_cut_pt( input_root, t ):
                 hltpt[i+5].GetName(), 
                 hltpt[i+10].GetName()]
         print("Efficiency "+b[2]+"HLT/L1", a[2]/a[1])
-        
+
 def tree_loop_cut_eta( input_root, t ):
     for k in range(len(kL)):
         if kL[k] == 1:
@@ -284,6 +284,7 @@ def tree_loop_cut_eta( input_root, t ):
     hlteta = []
     L1 = "N/A"
     HLT = "N/A"
+    
 ###TrigMatched_Taus_HLTetafl##################################################################################
     hist_onhltetarnn = ROOT.TH1D("onhlteta_rnn","",50,0,1)
     hist_onhltetaprong = ROOT.TH1D("onhlteta_prong","",10,0,10)
