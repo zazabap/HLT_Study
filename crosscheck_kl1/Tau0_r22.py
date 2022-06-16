@@ -11,7 +11,7 @@ list_order=[
         "Subleading", #15
 ]
 
-r_pt = [25,0,200]
+r_pt = [40,0,200]
 def Tau0_r22_pt( Tau0_root, r22_root):
     for k in range(len(kL)):
         if kL[k] == 1:

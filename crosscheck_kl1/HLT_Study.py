@@ -217,14 +217,14 @@ def createCanvasPads():
     pad2.Draw()
     return c, pad1, pad2
 
-def createRatio(h1, h2):
+def createRatio(h1, h2, min, max):
     h3 = h1.Clone("h3")
     h3.SetLineColor(ROOT.kBlack)
     h3.SetMarkerStyle(22)
     h3.SetMarkerSize(2)
     h3.SetTitle("")
-    h3.SetMinimum(0.70)
-    h3.SetMaximum(1.1)
+    h3.SetMinimum(min)
+    h3.SetMaximum(max)
     # Set up plot for markers and errors
     # h3.Sumw2()
     # h3.SetStats(0)
@@ -250,14 +250,13 @@ def createRatio(h1, h2):
 
     return h3
 
-def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
+def hist_print_compare_ratio_eff(hists_onhltn, diffhlt, x_label, t):
     c, pad1, pad2 = createCanvasPads()
     pad1.cd()
     pad1.SetLogy()
     i_pos = list_order.index(x_label)
-    if (x_label == "Delta_R" or 
-        x_label == "leading" or 
-        x_label == "Subleading"): 
+
+    if (x_label == "Delta_R"):
         pad1.SetLogy(0)
     
     # some type of hardcoding
@@ -291,7 +290,59 @@ def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     legend.Draw("same")
     
     pad1.Update()
-    h3 = createRatio(hists_onhltn[0],hists_onhltn[1])
+    h3 = createRatio(hists_onhltn[1],hists_onhltn[0],0.0,1.0)
+    h3.GetYaxis().SetTitle( diffhlt[1]+"/"+diffhlt[0]) 
+    x = h3.GetXaxis()
+    x.SetTitle(x_order[i_pos])
+    pad2.cd()
+    h3.Draw("p")
+
+    c.Print(taus[t]+"_"+x_label+".png")
+    c.Close()
+
+def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
+    c, pad1, pad2 = createCanvasPads()
+    pad1.cd()
+    pad1.SetLogy()
+    i_pos = list_order.index(x_label)
+    # if (x_label == "Delta_R" or 
+    #     x_label == "leading" or 
+    #     x_label == "Subleading"): 
+    if (x_label == "Delta_R"):
+        pad1.SetLogy(0)
+    
+    # some type of hardcoding
+    # Fix the inconsistent y-axis problem
+    ymax = 0
+    for h in range(len(hists_onhltn)):
+        ymax = max(hists_onhltn[h].GetMaximum(),ymax)
+    
+    for h in range(len(hists_onhltn)):
+        hists_onhltn[h].GetYaxis().SetRangeUser(0, ymax*1.1) # Hardcoding
+        hists_onhltn[h].Draw("Same")
+        hists_onhltn[h].SetLineColor( color[h])
+        hists_onhltn[h].SetLineWidth(4)
+        hists_onhltn[h].SetTitle("; ; Number of online events")
+        hists_onhltn[h].GetYaxis().SetTitleOffset(1.05)
+        hists_onhltn[h].SetMinimum(0.1)
+
+    pad1.RangeAxis( pad1.GetUxmin(),
+    pad1.GetUymin(),
+    pad1.GetUxmax(),
+    pad1.GetUymax()*1.5 )
+    pad1.RedrawAxis()
+
+    posleg( leg_pos[i_pos][0], leg_pos[i_pos][1], leg_pos[i_pos][2])
+    legend = ROOT.TLegend(l_x_min, l_y_min, l_x_max, l_y_max)
+    legend.SetTextSize(0.035)
+    legend.SetBorderSize(0)
+    legend.SetHeader( x_order[i_pos] +" #kappa_{#lambda}="+str(kL[0]),"C")
+    for h in range(len(hists_onhltn)):
+        legend.AddEntry(hists_onhltn[h], "("+str(int(hists_onhltn[h].GetEntries()))+")"+diffhlt[h])
+    legend.Draw("same")
+    
+    pad1.Update()
+    h3 = createRatio(hists_onhltn[0],hists_onhltn[1],0.7, 1.1)
     x = h3.GetXaxis()
     x.SetTitle(x_order[i_pos])
     pad2.cd()
