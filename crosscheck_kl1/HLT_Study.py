@@ -152,7 +152,7 @@ leg_pos =[
         ["L", "U", 4], #11
         ["C", "D", 4], #12
         ["L", "U", 4], #13
-        ["R", "U", 4], #14
+        ["R", "D", 4], #14
         ["R", "U", 4], #15
 ]
 
@@ -213,15 +213,16 @@ def createCanvasPads():
     pad2 = ROOT.TPad("pad2", "pad2", 0, 0.0, 1, 0.3)
     pad2.SetTopMargin(0)  # joins upper and lower plot
     pad2.SetBottomMargin(0.2)
-    # pad2.SetGridx()
+    #pad2.SetGridy()
+    pad2.SetGridy()
     pad2.Draw()
     return c, pad1, pad2
 
 def createRatio(h1, h2, min, max):
     h3 = h1.Clone("h3")
     h3.SetLineColor(ROOT.kBlack)
-    h3.SetMarkerStyle(22)
-    h3.SetMarkerSize(2)
+    h3.SetMarkerStyle(20)
+    h3.SetMarkerSize(1)
     h3.SetTitle("")
     h3.SetMinimum(min)
     h3.SetMaximum(max)
@@ -233,7 +234,7 @@ def createRatio(h1, h2, min, max):
     # Adjust y-axis settings
     y = h3.GetYaxis()
     y.SetTitle("ratio r22/Tau0 ") 
-    y.SetNdivisions(8)
+    y.SetNdivisions(20)
     y.SetTitleSize(40)
     y.SetTitleFont(43)
     y.SetTitleOffset(1.2)
@@ -259,8 +260,6 @@ def hist_print_compare_ratio_eff(hists_onhltn, diffhlt, x_label, t):
     if (x_label == "Delta_R"):
         pad1.SetLogy(0)
     
-    # some type of hardcoding
-    # Fix the inconsistent y-axis problem
     ymax = 0
     for h in range(len(hists_onhltn)):
         ymax = max(hists_onhltn[h].GetMaximum(),ymax)
@@ -270,7 +269,7 @@ def hist_print_compare_ratio_eff(hists_onhltn, diffhlt, x_label, t):
         hists_onhltn[h].Draw("Same")
         hists_onhltn[h].SetLineColor( color[h])
         hists_onhltn[h].SetLineWidth(4)
-        hists_onhltn[h].SetTitle("; ; Number of online events")
+        hists_onhltn[h].SetTitle("; ; Offline events")
         hists_onhltn[h].GetYaxis().SetTitleOffset(1.05)
         hists_onhltn[h].SetMinimum(0.1)
 
@@ -290,7 +289,7 @@ def hist_print_compare_ratio_eff(hists_onhltn, diffhlt, x_label, t):
     legend.Draw("same")
     
     pad1.Update()
-    h3 = createRatio(hists_onhltn[1],hists_onhltn[0],0.0,1.0)
+    h3 = createRatio(hists_onhltn[1],hists_onhltn[0],0.0,1.05)
     h3.GetYaxis().SetTitle( diffhlt[1]+"/"+diffhlt[0]) 
     x = h3.GetXaxis()
     x.SetTitle(x_order[i_pos])
@@ -305,10 +304,9 @@ def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     pad1.cd()
     pad1.SetLogy()
     i_pos = list_order.index(x_label)
-    # if (x_label == "Delta_R" or 
-    #     x_label == "leading" or 
-    #     x_label == "Subleading"): 
-    if (x_label == "Delta_R"):
+    if (x_label == "Delta_R" or 
+        x_label == "leading" or 
+        x_label == "Subleading"): 
         pad1.SetLogy(0)
     
     # some type of hardcoding

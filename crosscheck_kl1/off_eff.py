@@ -1,5 +1,5 @@
 from xmlrpc.client import Fault
-from sympy import true
+from sympy import false, true
 from torch import log2_
 from HLT_Study import *
 from L1_HLT_cut import *
@@ -13,7 +13,7 @@ list_order = [
     "Subleading"
 ]
 
-r_pt = [50, 0, 200]
+r_pt = [50, 0, 250]
 
 
 def tree_loop_select_pt(input_root, t):
@@ -71,12 +71,15 @@ def tree_loop_select_pt(input_root, t):
         if(select):
             select = select and (tree.Offline_Matched_Taus[0].Pt() > 20)
             select = select and (tree.Offline_Matched_Taus[1].Pt() > 12)
-
+        if(len(tree.Off_Matched_TauIDl)<2): continue
         for i in range(len(tree.Off_Matched_TauIDl)):
                 # print(tree.Off_Matched_TauIDl[i])
-                if tree.Off_Matched_TauIDl[i] == True:
-                    select = select and tree.Off_Matched_TauIDl[i]
-        select = select and L1_1 
+                if(tree.Off_Matched_TauIDl[0] == True
+                 and tree.Off_Matched_TauIDl[1] == True):
+                    select = select 
+                else:
+                    select = False
+        select = select and (L1_1 or L1_2)
 
         # How to pass RNN loose ID?
         if(select):
@@ -90,13 +93,13 @@ def tree_loop_select_pt(input_root, t):
                         tree.Offline_Matched_Taus[1].Pt(), 1)
                     vec0 = tree.Offline_Matched_Taus[0].Vect()
                     vec1 = tree.Offline_Matched_Taus[1].Vect()
-                    hist_offhltptdeltaR.Fill(vec1.DeltaR(vec0))
+                    hist_offhltptdeltaR.Fill(vec1.DeltaR(vec0))                    
             for j in range(len(tree.Off_Matched_TauRNN)):
                 hist_offhltrnn.Fill(tree.Off_Matched_TauRNN[j], 1)
             for k in range(len(tree.Off_Matched_TauProng)):
                 hist_offhltprong.Fill(tree.Off_Matched_TauProng[k], 1)
 
-            if True:
+            if L1_1:
                 if HLT_1:
                     for i in range(len(tree.Offline_Matched_Taus)):
                         hist_HLT_offhltpt_r.Fill(
@@ -121,7 +124,6 @@ def tree_loop_select_pt(input_root, t):
     hltoff.append(hist_offhltptdeltaR)
     hltoff.append(hist_offhltpt_lead_r)
     hltoff.append(hist_offhltpt_sublead_r)
-
 
     hltoff.append(hist_HLT_offhltrnn)
     hltoff.append(hist_HLT_offhltprong)
@@ -448,7 +450,10 @@ def main():
     # tree_loop_eff_eta("Tau0_Pass.root", 2)
     # tree_loop_eff_eta("Tau0_PassFail.root", 3)
 
-    tree_loop_select_pt("r22_Pass.root", 2)
+    # tree_loop_select_pt("r22_Pass.root", 0)
+    # tree_loop_select_pt("r22_PassFail.root", 1)
+    # tree_loop_select_pt("Tau0_Pass.root", 2)
+    tree_loop_select_pt("Tau0_PassFail.root", 3)
 
 
 if __name__ == "__main__":
