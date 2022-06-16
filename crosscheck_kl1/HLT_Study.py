@@ -121,68 +121,78 @@ def hist_print_compare_deltaR(hists_onhltn, diffhlt):
     canvas.Close()
 
 list_order = [
-        "p_{T}^{#tau}",
-        "p_{T}^{#tau} leading",
-        "p_{T}^{#tau} Subleading",
-        "RNN Score",
-        "Prong",
-        "p_{T}^{#tau}_r",
-        "p_{T}^{#tau} leading_r",
-        "p_{T}^{#tau} Subleading_r",
-        "pt #Delta R",
-        "eta #Delta R",
-        "#Delta R" # comment out for initial stage
+        "p_{T}^{#tau}", #1
+        "p_{T}^{#tau} leading", #2
+        "p_{T}^{#tau} Subleading",#3
+        "RNN Score",#4
+        "Prong",#5
+        "p_{T}^{#tau}_r",#6
+        "p_{T}^{#tau} leading_r",#7
+        "p_{T}^{#tau} Subleading_r",#8
+        "pt #Delta R",#9
+        "eta #Delta R",#10
+        "#Delta R", #11
+        "RNN_Score", #12
+        "Delta_R", #13
+        "leading", #14
+        "Subleading", #15
 ]
 
-# leg_pos for first type of study
-# No cut at all
-leg_pos =[["R", "U", 4],
-        ["R", "U", 4],
-        ["R", "U", 4],
-        ["R", "D", 4],
-        ["R", "U", 4],
-        ["R", "D", 4],
-        ["R", "D", 4],
-        ["R", "D", 4],
-        ["C", "D", 4],
-        ["C", "D", 4]
+leg_pos =[
+        ["R", "D", 4], #1
+        ["R", "D", 4], #2
+        ["R", "D", 4], #3
+        ["C", "D", 4], #4
+        ["R", "U", 4], #5
+        ["R", "D", 4], #6
+        ["R", "D", 4], #7
+        ["R", "D", 4], #8
+        ["C", "D", 4], #9
+        ["C", "D", 4], #10
+        ["L", "U", 4], #11
+        ["C", "D", 4], #12
+        ["L", "U", 4], #13
+        ["R", "U", 4], #14
+        ["R", "U", 4], #15
 ]
 
-# leg_pos for second type of 
-# study for the HLT 
-leg_pos =[["R", "D", 4],
-        ["R", "D", 4],
-        ["R", "D", 4],
-        ["C", "D", 4],
-        ["C", "D", 4],
-        ["R", "D", 4],
-        ["R", "D", 4],
-        ["R", "D", 4],
-        ["C", "D", 4],
-        ["C", "D", 4],
-        ["L", "U", 4]
+x_order = [
+        "p_{T}^{#tau}", #1
+        "p_{T}^{#tau} leading", #2
+        "p_{T}^{#tau} Subleading",#3
+        "RNN Score",#4
+        "Prong",#5
+        "p_{T}^{#tau}_r",#6
+        "p_{T}^{#tau} leading_r",#7
+        "p_{T}^{#tau} Subleading_r",#8
+        "pt #Delta R",#9
+        "eta #Delta R",#10
+        "#Delta R", #11
+        "RNN Score", #12
+        "#Delta R", #13
+        "p_{T}^{#tau} leading", #14
+        "p_{T}^{#tau} Subleading",#15
 ]
 
-# Every other things are the same except for deltaR
 def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
     canvas = ROOT.TCanvas("c")
     canvas.cd()
     canvas.SetLogy()
     i_pos = list_order.index(x_label)
-    if x_label == "#Delta R": 
+    if x_label == "#Delta R" or x_label == "Delta_R": 
         canvas.SetLogy(0)
     for h in range(len(hists_onhltn)):
         hists_onhltn[h].Draw("same")
         hists_onhltn[h].SetLineColor( color[h])
         hists_onhltn[h].SetLineWidth(2)
-        hists_onhltn[h].SetTitle(";"+x_label+"; Number of online events")
+        hists_onhltn[h].SetTitle(";"+x_order[i_pos]+"; Number of online events")
         hists_onhltn[h].GetYaxis().SetTitleOffset(1.05)
         hists_onhltn[h].SetMinimum(0.1)
     posleg( leg_pos[i_pos][0], leg_pos[i_pos][1], leg_pos[i_pos][2])
     legend = ROOT.TLegend(l_x_min, l_y_min, l_x_max, l_y_max)
     legend.SetTextSize(0.035)
     legend.SetBorderSize(0)
-    legend.SetHeader(x_label+" #kappa_{#lambda}="+str(kL[0]),"C")
+    legend.SetHeader(x_order[i_pos]+" #kappa_{#lambda}="+str(kL[0]),"C")
     for h in range(len(hists_onhltn)):
         # legend.AddEntry(hists_onhltn[h],"Tau "+diffhlt[h]+" ("+str(int(hists_onhltn[h].GetEntries()))+")")
         legend.AddEntry(hists_onhltn[h], diffhlt[h]+"("+str(int(hists_onhltn[h].GetEntries()))+")")
@@ -200,7 +210,7 @@ def createCanvasPads():
     pad1.Draw()
     # Lower ratio plot is pad2
     c.cd()  # returns to main canvas before defining pad2
-    pad2 = ROOT.TPad("pad2", "pad2", 0, 0.05, 1, 0.3)
+    pad2 = ROOT.TPad("pad2", "pad2", 0, 0.0, 1, 0.3)
     pad2.SetTopMargin(0)  # joins upper and lower plot
     pad2.SetBottomMargin(0.2)
     # pad2.SetGridx()
@@ -226,7 +236,7 @@ def createRatio(h1, h2):
     y.SetNdivisions(8)
     y.SetTitleSize(40)
     y.SetTitleFont(43)
-    y.SetTitleOffset(1.15)
+    y.SetTitleOffset(1.2)
     y.SetLabelFont(43)
     y.SetLabelSize(18)
  
@@ -240,43 +250,56 @@ def createRatio(h1, h2):
 
     return h3
 
-#Add Utility on ratio
 def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     c, pad1, pad2 = createCanvasPads()
     pad1.cd()
-    # pad1.SetLogy()
+    pad1.SetLogy()
     i_pos = list_order.index(x_label)
-    if x_label == "#Delta R": 
+    if (x_label == "Delta_R" or 
+        x_label == "leading" or 
+        x_label == "Subleading"): 
         pad1.SetLogy(0)
+    
+    # some type of hardcoding
+    # Fix the inconsistent y-axis problem
+    ymax = 0
     for h in range(len(hists_onhltn)):
-        hists_onhltn[h].Draw("same")
+        ymax = max(hists_onhltn[h].GetMaximum(),ymax)
+    
+    for h in range(len(hists_onhltn)):
+        hists_onhltn[h].GetYaxis().SetRangeUser(0, ymax*1.1) # Hardcoding
+        hists_onhltn[h].Draw("Same")
         hists_onhltn[h].SetLineColor( color[h])
         hists_onhltn[h].SetLineWidth(4)
-        hists_onhltn[h].SetTitle(";"+x_label+"; Number of online events")
+        hists_onhltn[h].SetTitle("; ; Number of online events")
         hists_onhltn[h].GetYaxis().SetTitleOffset(1.05)
         hists_onhltn[h].SetMinimum(0.1)
+
+    pad1.RangeAxis( pad1.GetUxmin(),
+    pad1.GetUymin(),
+    pad1.GetUxmax(),
+    pad1.GetUymax()*1.5 )
+    pad1.RedrawAxis()
+
     posleg( leg_pos[i_pos][0], leg_pos[i_pos][1], leg_pos[i_pos][2])
     legend = ROOT.TLegend(l_x_min, l_y_min, l_x_max, l_y_max)
     legend.SetTextSize(0.035)
     legend.SetBorderSize(0)
-    legend.SetHeader(x_label+" #kappa_{#lambda}="+str(kL[0]),"C")
+    legend.SetHeader( x_order[i_pos] +" #kappa_{#lambda}="+str(kL[0]),"C")
     for h in range(len(hists_onhltn)):
-        # legend.AddEntry(hists_onhltn[h],"Tau "+diffhlt[h]+" ("+str(int(hists_onhltn[h].GetEntries()))+")")
         legend.AddEntry(hists_onhltn[h], "("+str(int(hists_onhltn[h].GetEntries()))+")"+diffhlt[h])
     legend.Draw("same")
+    
     pad1.Update()
-
     h3 = createRatio(hists_onhltn[0],hists_onhltn[1])
     x = h3.GetXaxis()
-    x.SetTitle(x_label)
+    x.SetTitle(x_order[i_pos])
     pad2.cd()
     h3.Draw("p")
 
     c.Print(taus[t]+"_"+x_label+".png")
     c.Close()
 
-# loop over the root file and get deltaR
-# comparing leading and subleading values
 def tree_loop_deltaR( input_root, t):
     for k in range(len(kL)):
         if kL[k] == 1:
@@ -331,8 +354,6 @@ def tree_loop_deltaR( input_root, t):
     hists_onhltn = [ hist_onhltetadeltaR, hist_onhltetadeltaR_lead,hist_onhltetadeltaR_sublead]
     hist_print_compare(hists_onhltn, diffhlt, "eta #Delta R", t)
 
-# Loop over the root file interested in
-# for hltpt 
 def tree_loop_hltpt( input_root, t ):
     for k in range(len(kL)):
         if kL[k] == 1:
@@ -422,7 +443,7 @@ def tree_loop_hltpt( input_root, t ):
                     hist_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
             for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
                 hist_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
-            for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
+            for k in range(len(tree.TrigMatched_prong_HLTptfl)):
                 hist_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
     
     hltpt.append(hist_onhltptpt)
@@ -466,7 +487,7 @@ def tree_loop_hltpt( input_root, t ):
                     hist_onhltetapt_sublead_r.Fill(tree.TrigMatched_Taus_HLTetafl[1].Pt(),1)
             for j in range(len(tree.TrigMatched_rnn_HLTetafl)):
                 hist_onhltetarnn.Fill(tree.TrigMatched_rnn_HLTetafl[j],1)
-            for k in range(len(tree.TrigMatched_rnn_HLTetafl)):
+            for k in range(len(tree.TrigMatched_prong_HLTetafl)):
                 hist_onhltetaprong.Fill(tree.TrigMatched_prong_HLTetafl[k], 1)
 
     hlteta.append(hist_onhltetapt)
@@ -489,18 +510,6 @@ def tree_loop_hltpt( input_root, t ):
         print("Efficiency pt/Off", a[1]/a[0])
         print("Efficiency eta/Off",a[2]/a[0])
         print("Efficiency eta/pt", a[2]/a[1])
-    #return hl
-    # Plots
-    #hl.append(hist_print(hist_onhltptpt, t, "p^{#tau}_{T}",20, 0, 100))
-    #hl.append(hist_print(hist_onhltptpt_lead, t, "p_{T}^{#tau}",20, 0, 100))
-    #hl.append(hist_print(hist_onhltptpt_sublead, t, "p^{#tau}_{T}", 20, 0, 100))
-    #hl.append(hist_print(hist_onhltptrnn, t, "RNN Score", 20 ,0, 1))
-    #hl.append(hist_print(hist_onhltptprong, t, "Prong",10, 0, 10 ))
-    #hl.append(hist_print(hist_onhltetapt, t, "p^{#tau}_{T}",20, 0, 100))
-    #hl.append(hist_print(hist_onhltetapt_lead, t, "p_{T}^{#tau}",20, 0, 100))
-    #hl.append(hist_print(hist_onhltetapt_sublead, t, "p^{#tau}_{T}", 20, 0, 100))
-    #hl.append(hist_print(hist_onhltetarnn, t, "RNN Score", 20 ,0, 1))
-    #hl.append(hist_print(hist_onhltetaprong, t, "Prong",10, 0, 10 ))
 
 
 def main():

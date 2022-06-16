@@ -25,101 +25,6 @@ from HLT_Study import *
 # leg.AddEntry(geq1,"2X_{n,eq}","L")
 # leg.Draw()
 
-def tree_loop_offMatchTau(input_root, t):
-    for k in range(len(kL)):
-        if kL[k] == 1:
-            inFile = ROOT.TFile.Open( input_root ,"READ")
-
-    print("Start Looping ", taus[t])
-    tree = inFile.Get("analysis")
-    entries = range(tree.GetEntries())
-    hltoff = []
-####Off_Matched_Tau##################################################################################
-    hist_offhltrnn = ROOT.TH1D("offhlt_rnn","",100,0,1)
-    hist_offhltprong = ROOT.TH1D("offhlt_prong","",25,0,25)
-    hist_offhltpt_r = ROOT.TH1D("offhltpt_r","",100,0,100)
-    hist_offhltpt_lead_r = ROOT.TH1D("offhltpt_lead_r","",100,0,100)
-    hist_offhltpt_sublead_r = ROOT.TH1D("offhltpt_sublead_r","",100,0,100)
-
-    hist_L1_offhltrnn = ROOT.TH1D("L1_offhlt_rnn","",100,0,1)
-    hist_L1_offhltprong = ROOT.TH1D("L1_offhlt_prong","",25,0,25)
-    hist_L1_offhltpt_r = ROOT.TH1D("L1_offhltpt_r","",100,0,100)
-    hist_L1_offhltpt_lead_r = ROOT.TH1D("L1_offhltpt_lead_r","",100,0,100)
-    hist_L1_offhltpt_sublead_r = ROOT.TH1D("L1_offhltpt_sublead_r","",100,0,100)
-
-    hist_HLT_offhltrnn = ROOT.TH1D("HLT_offhlt_rnn","",100,0,1)
-    hist_HLT_offhltprong = ROOT.TH1D("HLT_offhlt_prong","",25,0,25)
-    hist_HLT_offhltpt_r = ROOT.TH1D("HLT_offhltpt_r","",100,0,100)
-    hist_HLT_offhltpt_lead_r = ROOT.TH1D("HLT_offhltpt_lead_r","",100,0,100)
-    hist_HLT_offhltpt_sublead_r = ROOT.TH1D("HLT_offhltpt_sublead_r","",100,0,100)
-
-    # Loop over entries
-    for entry in entries:
-        tree.GetEntry(entry)
-        
-        L1_1 = getattr(tree, "L1_J25")
-        L1_2 = getattr(tree, "L1_ETA25")
-        if taus[t] == "r22_Pass" or taus[t] == "Tau0_Pass":
-            HLT_1 = getattr(tree, "HLT_J25_r22")
-            HLT_2 = getattr(tree, "HLT_ETA25_r22")
-        elif taus[t] == "r22_PassFail" or taus[t] == "Tau0_PassFail":
-            HLT_1 = getattr(tree, "HLT_J25_Tau0")
-            HLT_2 = getattr(tree, "HLT_ETA25_Tau0")
-
-
-        for i in range(len(tree.Offline_Matched_Taus)):
-            hist_offhltpt_r.Fill(tree.Offline_Matched_Taus[i].Pt(),1)
-            if(i==0):
-                hist_offhltpt_lead_r.Fill(tree.Offline_Matched_Taus[0].Pt(),1)
-            if(i==1):
-                hist_offhltpt_sublead_r.Fill(tree.Offline_Matched_Taus[1].Pt(),1)
-        for j in range(len(tree.Off_Matched_TauRNN)):
-            hist_offhltrnn.Fill(tree.Off_Matched_TauRNN[j],1)
-        for k in range(len(tree.Off_Matched_TauProng)):
-            hist_offhltprong.Fill(tree.Off_Matched_TauProng[k], 1)
-
-        # Should HLT be applied only after the L1 hardware trigger is passed? 
-        if L1_1 :
-            for i in range(len(tree.Offline_Matched_Taus)):
-                hist_L1_offhltpt_r.Fill(tree.Offline_Matched_Taus[i].Pt(),1)
-                if(i==0):
-                    hist_L1_offhltpt_lead_r.Fill(tree.Offline_Matched_Taus[0].Pt(),1)
-                if(i==1):
-                    hist_L1_offhltpt_sublead_r.Fill(tree.Offline_Matched_Taus[1].Pt(),1)
-            for j in range(len(tree.Off_Matched_TauRNN)):
-                hist_L1_offhltrnn.Fill(tree.Off_Matched_TauRNN[j],1)
-            for k in range(len(tree.Off_Matched_TauProng)):
-                hist_L1_offhltprong.Fill(tree.Off_Matched_TauProng[k], 1)
-        if HLT_1 :
-            for i in range(len(tree.Offline_Matched_Taus)):
-                hist_HLT_offhltpt_r.Fill(tree.Offline_Matched_Taus[i].Pt(),1)
-                if(i==0):
-                    hist_HLT_offhltpt_lead_r.Fill(tree.Offline_Matched_Taus[0].Pt(),1)
-                if(i==1):
-                    hist_HLT_offhltpt_sublead_r.Fill(tree.Offline_Matched_Taus[1].Pt(),1)
-            for j in range(len(tree.Off_Matched_TauRNN)):
-                hist_HLT_offhltrnn.Fill(tree.Off_Matched_TauRNN[j],1)
-            for k in range(len(tree.Off_Matched_TauProng)):
-                hist_HLT_offhltprong.Fill(tree.Off_Matched_TauProng[k], 1)
-
-    hltoff.append(hist_offhltrnn)
-    hltoff.append(hist_offhltprong)
-    hltoff.append(hist_offhltpt_r)
-    hltoff.append(hist_offhltpt_lead_r)
-    hltoff.append(hist_offhltpt_sublead_r)
-
-    hltoff.append(hist_L1_offhltrnn)
-    hltoff.append(hist_L1_offhltprong)
-    hltoff.append(hist_L1_offhltpt_r)
-    hltoff.append(hist_L1_offhltpt_lead_r)
-    hltoff.append(hist_L1_offhltpt_sublead_r)
-
-    hltoff.append(hist_HLT_offhltrnn)
-    hltoff.append(hist_HLT_offhltprong)
-    hltoff.append(hist_HLT_offhltpt_r)
-    hltoff.append(hist_HLT_offhltpt_lead_r)
-    hltoff.append(hist_HLT_offhltpt_sublead_r)
-
 
 taus = ["r22_Pass", "r22_PassFail", "Tau0_Pass", "Tau0_PassFail"]
 list_order = [
@@ -294,132 +199,6 @@ def ratio_tree_loop_cut_pt( input_root, t ):
 
 # Task one: Compare the manual cut with the 
 # Trigger cut. 
-r_pt = [25,0,200]
-def Tau0_r22_pt( Tau0_root, r22_root):
-    for k in range(len(kL)):
-        if kL[k] == 1:
-            inTau0 = ROOT.TFile.Open( Tau0_root ,"READ")
-            inr22 = ROOT.TFile.Open( r22_root ,"READ")
-    
-    tree = inr22.Get("analysis")
-    entries = range(tree.GetEntries())
-
-###################################################################################
-#TrigMatched_Taus_HLTptfl##########################################################
-
-    hist_HLT_onhltptpt_lead_r = ROOT.TH1D("HLT_onhltptpt_lead_r","",r_pt[0],r_pt[1],r_pt[2])
-    hist_HLT_onhltptpt_sublead_r = ROOT.TH1D("HLT_onhltptpt_sublead_r","",r_pt[0],r_pt[1],r_pt[2])
-
-    # Manual Cut add later if necessary
-    hist_m_onhltptpt_lead_r = ROOT.TH1D("m_onhltptpt_lead_r","",r_pt[0],r_pt[1],r_pt[2])
-    hist_m_onhltptpt_sublead_r = ROOT.TH1D("m_onhltptpt_sublead_r","",r_pt[0],r_pt[1],r_pt[2])
-
-    # Loop over entries
-    for entry in entries:
-        tree.GetEntry(entry)
-        L1_1 = getattr(tree, "L1_J25")
-        HLT_1 = getattr(tree, "HLT_J25_r22")
-        if L1_1:
-            if HLT_1:
-                for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
-                    if(i==0):
-                        hist_HLT_onhltptpt_lead_r.Fill(tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-                    if(i==1):
-                        hist_HLT_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
-
-    tree = inTau0.Get("analysis")
-    entries = range(tree.GetEntries())
-
-    for entry in entries:
-        tree.GetEntry(entry)
-        L1_1 = getattr(tree, "L1_J25")
-        HLT_1 = getattr(tree, "HLT_J25_Tau0") 
-        if L1_1:
-            if HLT_1:
-                if len(tree.TrigMatched_Taus_HLTptfl)<2 : continue
-                for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
-                    if(i==0 and tree.TrigMatched_Taus_HLTptfl[0].Pt()>35
-                        and tree.TrigMatched_Taus_HLTptfl[1].Pt()>25):
-                        hist_m_onhltptpt_lead_r.Fill(tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-                    if(i==1 and tree.TrigMatched_Taus_HLTptfl[0].Pt()>35
-                        and tree.TrigMatched_Taus_HLTptfl[1].Pt()>25):
-                        hist_m_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
-
-######################################################################################
-
-    hlt_ratio = []
-    hlt_ratio.append(hist_HLT_onhltptpt_lead_r)
-    hlt_ratio.append(hist_HLT_onhltptpt_sublead_r)
-    hlt_ratio.append(hist_m_onhltptpt_lead_r)
-    hlt_ratio.append(hist_m_onhltptpt_sublead_r)  
-
-    for i in range(2):
-        hist_print_compare_ratio([hlt_ratio[i],
-                            hlt_ratio[i+2]],
-                ["HLTpt_r22", "HLTpt_Tau0+"],
-                list_order[i+3], 0)
-
-def Tau0_r22_eta( Tau0_root, r22_root):
-    for k in range(len(kL)):
-        if kL[k] == 1:
-            inTau0 = ROOT.TFile.Open( Tau0_root ,"READ")
-            inr22 = ROOT.TFile.Open( r22_root ,"READ")
-    
-    tree = inr22.Get("analysis")
-    entries = range(tree.GetEntries())
-###################################################################################
-#TrigMatched_Taus_HLTptfl##########################################################
-    hist_HLT_onhltptpt_lead_r = ROOT.TH1D("HLT_onhltptpt_lead_r","",r_pt[0],r_pt[1],r_pt[2])
-    hist_HLT_onhltptpt_sublead_r = ROOT.TH1D("HLT_onhltptpt_sublead_r","",r_pt[0],r_pt[1],r_pt[2])
-
-    # Manual Cut add later if necessary
-    hist_m_onhltptpt_lead_r = ROOT.TH1D("m_onhltptpt_lead_r","",r_pt[0],r_pt[1],r_pt[2])
-    hist_m_onhltptpt_sublead_r = ROOT.TH1D("m_onhltptpt_sublead_r","",r_pt[0],r_pt[1],r_pt[2])
-
-    # Loop over entries
-    for entry in entries:
-        tree.GetEntry(entry)
-        L1_1 = getattr(tree, "L1_ETA25")
-        HLT_1 = getattr(tree, "HLT_ETA25_r22")
-        if L1_1:
-            if HLT_1:
-                for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
-                    if(i==0):
-                        hist_HLT_onhltptpt_lead_r.Fill(tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-                    if(i==1):
-                        hist_HLT_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
-
-    tree = inTau0.Get("analysis")
-    entries = range(tree.GetEntries())
-
-    for entry in entries:
-        tree.GetEntry(entry)
-        L1_1 = getattr(tree, "L1_ETA25")
-        HLT_1 = getattr(tree, "HLT_ETA25_Tau0") 
-        if L1_1:
-            if HLT_1:
-                if len(tree.TrigMatched_Taus_HLTptfl)<2 : continue
-                for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
-                    if(i==0 and tree.TrigMatched_Taus_HLTptfl[0].Pt()>35
-                        and tree.TrigMatched_Taus_HLTptfl[1].Pt()>25):
-                        hist_m_onhltptpt_lead_r.Fill(tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-                    if(i==1 and tree.TrigMatched_Taus_HLTptfl[0].Pt()>35
-                        and tree.TrigMatched_Taus_HLTptfl[1].Pt()>25):
-                        hist_m_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
-
-######################################################################################
-
-    hlt_ratio = []
-    hlt_ratio.append(hist_HLT_onhltptpt_lead_r)
-    hlt_ratio.append(hist_HLT_onhltptpt_sublead_r)
-    hlt_ratio.append(hist_m_onhltptpt_lead_r)
-    hlt_ratio.append(hist_m_onhltptpt_sublead_r)  
-
-    for i in range(2):
-        hist_print_compare_ratio([hlt_ratio[i],
-                            hlt_ratio[i+2]],
-                ["HLTeta_r22", "HLTeta_Tau0+"],
-                list_order[i+3], 0)
 
 def tree_loop_cut_pt( input_root, t ):
     for k in range(len(kL)):
@@ -705,12 +484,7 @@ def main():
     # ratio_tree_loop_cut_pt( "Tau0_PassFail.root", 3)
     # ratio_tree_loop_cut_pt( "Tau0_Pass.root", 2)
 
-    # Tau0_r22_pt( "Tau0_Pass.root", "r22_Pass.root")
-    # Tau0_r22_eta( "Tau0_Pass.root", "r22_Pass.root")
-    Tau0_r22_pt( "r22_PassFail.root", "r22_PassFail.root")
-    # Tau0_r22_eta( "Tau0_PassFail.root", "r22_PassFail.root")
-
-    # tree_loop_cut( "r22_Pass.root", 0)
+    tree_loop_cut_pt( "r22_Pass.root", 0)
     # tree_loop_cut("r22_PassFail.root", 1)
     # tree_loop_cut_pt("Tau0_PassFail.root", 3)
     # tree_loop_cut_pt("Tau0_Pass.root", 2)
@@ -730,3 +504,5 @@ if __name__ == "__main__" :
 #   could not observe in the plots 
 #   by other person. 
 
+# 2022/06/15 Comment
+# compare Tau0 r22 on 
