@@ -28,16 +28,16 @@ from HLT_Study import *
 
 taus = ["r22_Pass", "r22_PassFail", "Tau0_Pass", "Tau0_PassFail"]
 list_order = [
-        "RNN_Score",
+        "RNN Score",
         "Prong",
-        "Delta_R",
-        "leading",
-        "Subleading"
+        "#Delta R",
+        "p_{T}^{#tau} leading",
+        "p_{T}^{#tau} Subleading"
 ]
 
 def ratio_tree_loop_cut_pt( input_root, t ):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inFile = ROOT.TFile.Open( input_root ,"READ")
 
     print("Start Looping ", taus[t])
@@ -67,15 +67,15 @@ def ratio_tree_loop_cut_pt( input_root, t ):
     hist_HLT_onhltptrnn = ROOT.TH1D("HLT_onhltpt_rnn","",50,0,1)
     hist_HLT_onhltptprong = ROOT.TH1D("HLT_onhltpt_prong","",10,0,10)
     hist_HLT_onhltptpt_r = ROOT.TH1D("HLT_onhltptpt_r","",50,0,50)
-    hist_HLT_onhltptpt_lead_r = ROOT.TH1D("HLT_onhltptpt_lead_r","",50,0,50)
-    hist_HLT_onhltptpt_sublead_r = ROOT.TH1D("HLT_onhltptpt_sublead_r","",50,0,50)
+    hist_HLT_onhltptpt_lead_r = ROOT.TH1D("HLT_onhltptpt_lead_r","",100,0,500)
+    hist_HLT_onhltptpt_sublead_r = ROOT.TH1D("HLT_onhltptpt_sublead_r","",100,0,500)
     hist_HLT_onhltptdeltaR = ROOT.TH1D("HLT_onhltptdeltaR", "",50, -1, 4)
 
     # Manual Cut add later if necessary
     hist_m_onhltptrnn = ROOT.TH1D("m_onhltpt_rnn","",50,0,1)
     hist_m_onhltptprong = ROOT.TH1D("m_onhltpt_prong","",10,0,10)
-    hist_m_onhltptpt_lead_r = ROOT.TH1D("m_onhltptpt_lead_r","",50,0,50)
-    hist_m_onhltptpt_sublead_r = ROOT.TH1D("m_onhltptpt_sublead_r","",50,0,50)
+    hist_m_onhltptpt_lead_r = ROOT.TH1D("m_onhltptpt_lead_r","",100,0,500)
+    hist_m_onhltptpt_sublead_r = ROOT.TH1D("m_onhltptpt_sublead_r","",100,0,500)
     hist_m_onhltptdeltaR = ROOT.TH1D("m_onhltptdeltaR", "",50, -1, 4)
 
     # Loop over entries
@@ -91,10 +91,10 @@ def ratio_tree_loop_cut_pt( input_root, t ):
             HLT_1 = getattr(tree, "HLT_J25_r22")
             HLT = "HLT_J25_r22"
         elif taus[t] == "Tau0_Pass":
-            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT_1 = getattr(tree, "HLT_J25_r22")
             HLT = "HLT_J20_Tau0"
         elif taus[t] == "Tau0_PassFail":
-            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT_1 = getattr(tree, "HLT_J25_r22")
             HLT = "HLT_J20_Tau0"
 
         # Loop over without cut 
@@ -111,12 +111,12 @@ def ratio_tree_loop_cut_pt( input_root, t ):
                 hist_onhltptdeltaR.Fill(vec1.DeltaR(vec0))  
             
             # Manual Cut Addition
-            if(i==0 and tree.TrigMatched_Taus_HLTptfl[i].Pt()>35):
-                hist_m_onhltptpt_lead_r.Fill(
-                    tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-            if(i==1 and tree.TrigMatched_Taus_HLTptfl[i].Pt()>25):
-                hist_m_onhltptpt_sublead_r.Fill(
-                    tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)  
+            # if(i==0 and tree.TrigMatched_Taus_HLTptfl[i].Pt()>35):
+            #     hist_m_onhltptpt_lead_r.Fill(
+            #         tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
+            # if(i==1 and tree.TrigMatched_Taus_HLTptfl[i].Pt()>25):
+            #     hist_m_onhltptpt_sublead_r.Fill(
+            #         tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)  
 
         for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
             hist_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
@@ -137,6 +137,12 @@ def ratio_tree_loop_cut_pt( input_root, t ):
                     vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
                     vec1= tree.TrigMatched_Taus_HLTptfl[1].Vect()
                     hist_L1_onhltptdeltaR.Fill(vec0.DeltaR(vec1))
+                if(i==0 and tree.TrigMatched_Taus_HLTptfl[i].Pt()>35):
+                    hist_m_onhltptpt_lead_r.Fill(
+                        tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
+                if(i==1 and tree.TrigMatched_Taus_HLTptfl[i].Pt()>25):
+                    hist_m_onhltptpt_sublead_r.Fill(
+                        tree.TrigMatched_Taus_HLTptfl[1].Pt(),1) 
             for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
                 hist_L1_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
             for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
@@ -179,39 +185,24 @@ def ratio_tree_loop_cut_pt( input_root, t ):
 ######################################################################################
 
     hlt_ratio = []
-    hlt_ratio.append(hist_onhltptpt_lead_r)
-    hlt_ratio.append(hist_onhltptpt_sublead_r)
+    hlt_ratio.append(hist_HLT_onhltptpt_lead_r)
+    hlt_ratio.append(hist_HLT_onhltptpt_sublead_r)
     hlt_ratio.append(hist_m_onhltptpt_lead_r)
     hlt_ratio.append(hist_m_onhltptpt_sublead_r)  
 
     for i in range(2):
         hist_print_compare([hlt_ratio[i],
                             hlt_ratio[i+2]],
-                ["HLT", "Manual"],
+                ["HLT_r22", "L1+Manual"],
                 list_order[i+3], t)
 
-######################################################################################
 
-    # for i in range(5):
-    #     #posleg(leg_pos[i][0], leg_pos[i][1], leg_pos[i][2])
-    #     hist_print_compare([hltpt[i],
-    #                         hltpt[i+5], 
-    #                         hltpt[i+10]],
-    #             ["N/A", L1,  HLT],
-    #             list_order[i], t)
-    #     a = [   int(hltpt[i].GetEntries()), 
-    #             int(hltpt[i+5].GetEntries()), 
-    #             int(hltpt[i+10].GetEntries())]
-    #     print("Efficiency HLT/L1", a[2]/a[1])
-    #     b = [   hltpt[i].GetName(), 
-    #             hltpt[i+5].GetName(), 
-    #             hltpt[i+10].GetName()]
-    #     print("Efficiency "+b[2]+"HLT/L1", a[2]/a[1])
-
+# Task one: Compare the manual cut with the 
+# Trigger cut. 
 
 def tree_loop_cut_pt( input_root, t ):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inFile = ROOT.TFile.Open( input_root ,"READ")
 
     print("Start Looping ", taus[t])
@@ -285,10 +276,10 @@ def tree_loop_cut_pt( input_root, t ):
         if L1_1:
             for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
                 hist_L1_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
-                if(i==0):
+                if(i==0 and tree.TrigMatched_Taus_HLTptfl[0].Pt()>35):
                     hist_L1_onhltptpt_lead_r.Fill(
                         tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-                if(i==1):
+                if(i==1 and tree.TrigMatched_Taus_HLTptfl[1].Pt()>25):
                     hist_L1_onhltptpt_sublead_r.Fill(
                         tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
                     # Fill DeltaR
@@ -303,9 +294,9 @@ def tree_loop_cut_pt( input_root, t ):
             if HLT_1:
                 for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
                     hist_HLT_onhltptpt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
-                    if(i==0):
+                    if(i==0 and tree.TrigMatched_Taus_HLTptfl[0].Pt()>35):
                         hist_HLT_onhltptpt_lead_r.Fill(tree.TrigMatched_Taus_HLTptfl[0].Pt(),1)
-                    if(i==1):
+                    if(i==1 and tree.TrigMatched_Taus_HLTptfl[1].Pt()>25):
                         hist_HLT_onhltptpt_sublead_r.Fill(tree.TrigMatched_Taus_HLTptfl[1].Pt(),1)
                         # Fill DeltaR
                         vec0= tree.TrigMatched_Taus_HLTptfl[0].Vect()
@@ -333,6 +324,7 @@ def tree_loop_cut_pt( input_root, t ):
     hltpt.append(hist_HLT_onhltptdeltaR)
     hltpt.append(hist_HLT_onhltptpt_lead_r)
     hltpt.append(hist_HLT_onhltptpt_sublead_r)
+
 ######################################################################################
 
     for i in range(5):
@@ -353,7 +345,7 @@ def tree_loop_cut_pt( input_root, t ):
 
 def tree_loop_cut_eta( input_root, t ):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inFile = ROOT.TFile.Open( input_root ,"READ")
 
     print("Start Looping ", taus[t])
@@ -487,26 +479,16 @@ def tree_loop_cut_eta( input_root, t ):
                 hlteta[i+10].GetName()]
         print("Efficiency "+b[2]+"HLT/L1", a[2]/a[1])
 
-def offline_efficiency(input_root, t):
-    print("Offline Efficiency calculation based on HLT")
-
 def main():
-    #ratio_tree_loop_cut_pt( "r22_Pass.root", 0)
-    ratio_tree_loop_cut_pt( "r22_PassFail.root", 1)
-    #ratio_tree_loop_cut_pt( "Tau0_Pass.root", 2)
-    #ratio_tree_loop_cut_pt( "Tau0_PassFail.root", 3)
-    # tree_loop_cut_eta( "r22_Pass.root", 0)
+    # ratio_tree_loop_cut_pt( "r22_PassFail.root", 1)
+    # ratio_tree_loop_cut_pt( "Tau0_PassFail.root", 3)
+    # ratio_tree_loop_cut_pt( "Tau0_Pass.root", 2)
 
-    # tree_loop_cut_pt("r22_PassFail.root", 1)
-    # tree_loop_cut_eta("r22_PassFail.root", 1)
-
+    tree_loop_cut_pt( "r22_Pass.root", 0)
+    # tree_loop_cut("r22_PassFail.root", 1)
+    # tree_loop_cut_pt("Tau0_PassFail.root", 3)
     # tree_loop_cut_pt("Tau0_Pass.root", 2)
     # tree_loop_cut_eta("Tau0_Pass.root", 2)
-
-    # tree_loop_cut_pt("Tau0_PassFail.root", 3)
-    # tree_loop_cut_eta("Tau0_PassFail.root", 3)
-
-
 
 if __name__ == "__main__" :
     print("Hello, Start Ploting for HLT")
@@ -517,9 +499,10 @@ if __name__ == "__main__" :
 #    peak for leading and subleading
 #   using the includeFailed information 
 #   and why does it accumulate around 
-
 # 2. Why does it have some cut for 
 #   leading and subleading pt which 
 #   could not observe in the plots 
 #   by other person. 
 
+# 2022/06/15 Comment
+# compare Tau0 r22 on 

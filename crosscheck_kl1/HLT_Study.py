@@ -136,6 +136,8 @@ list_order = [
         "Delta_R", #13
         "leading", #14
         "Subleading", #15
+        "leading_eta",  #16
+        "Subleading_eta" #17
 ]
 
 leg_pos =[
@@ -152,8 +154,10 @@ leg_pos =[
         ["L", "U", 4], #11
         ["C", "D", 4], #12
         ["L", "U", 4], #13
-        ["R", "D", 4], #14
+        ["R", "U", 4], #14
         ["R", "U", 4], #15
+        ["C", "D", 4], #16
+        ["C", "D", 4], #17
 ]
 
 x_order = [
@@ -172,6 +176,8 @@ x_order = [
         "#Delta R", #13
         "p_{T}^{#tau} leading", #14
         "p_{T}^{#tau} Subleading",#15
+        "#eta leading", #16
+        "#eta Subleading",#17
 ]
 
 def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
@@ -234,7 +240,7 @@ def createRatio(h1, h2, min, max):
     # Adjust y-axis settings
     y = h3.GetYaxis()
     y.SetTitle("ratio r22/Tau0 ") 
-    y.SetNdivisions(20)
+    y.SetNdivisions(6)
     y.SetTitleSize(40)
     y.SetTitleFont(43)
     y.SetTitleOffset(1.2)
