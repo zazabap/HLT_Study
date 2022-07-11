@@ -32,6 +32,68 @@ emu_order = [
     "Pt+RNN+Delta_R"
 ]
 
+def tree_online_PtRNNdR(tree, emu):
+    passPt = false
+    passPtdR = false
+    passRNN = false
+    passPtRNN = false
+    passPtRNNdR = false
+
+    if(emu == 0): 
+        for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < 35): continue
+            for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+                if (i==j): continue
+                if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 25): continue
+                passPt = true
+    
+    if(emu == 1):
+        for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < 35): continue
+            for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+                if (i==j): continue
+                if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 25): continue
+                vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+                vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+                dR = vec0.DeltaR(vec1)
+                if (  dR> 0.3 and dR <3.0) : 
+                    passPtdR = true
+
+    if(emu == 2):
+        for i in range(len(tree.TrigMatched_rnn_HLTptfl)):
+            if (tree.TrigMatched_rnn_HLTptfl[i]): passRNN = true
+
+
+    if(emu == 3):
+        for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < 35): continue
+            for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+                if (i==j): continue
+                if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 25): continue
+                vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+                vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+                passPt = true
+                if ( tree.TrigMatched_rnn_HLTptfl[i]
+                and tree.TrigMatched_rnn_HLTptfl[j]): passPtRNN = true
+
+    if(emu == 4):
+        for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < 35): continue
+            for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+                if (i==j): continue
+                if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 25): continue
+                vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+                vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+                passPt = true
+                if ( tree.TrigMatched_rnn_HLTptfl[i]
+                and tree.TrigMatched_rnn_HLTptfl[j]): passPtRNN = true
+                else: continue
+                dR = vec0.DeltaR(vec1)
+                if (  dR> 0.3 and dR <3.0) : 
+                    passPtRNNdR = true
+
+    return [passPt,passPtdR,passRNN, passPtRNN, passPtRNNdR] 
+
 def emulation(input_root, t, emu):
     for k in range(len(kL)):
         if kL[k] == 1:
@@ -72,11 +134,13 @@ def emulation(input_root, t, emu):
     hist_HLT_offhltptdeltaR = ROOT.TH1D("HLT_offhltptdeltaR", "", 50, -1, 4)
 
     # Selection+ Selection Pass HLT
+    denominator = 0 # entries (pass select + L1)
+    enumerator_emu = 0 # entries (pass selection + L1) + (emu/HLT [online taus])
+    enumerator_hlt =0  # entries (pass selection + L1) + (emu/HLT [online taus])
     for entry in entries:
         tree.GetEntry(entry)
         L1_1 = getattr(tree, "L1_J25")
         L1_2 = getattr(tree, "L1_ETA25")
-        L1 = "L1_J25"
         # Bit confused about this point of trigger use
         if taus[t] == "r22_Pass":
             HLT_1 = getattr(tree, "HLT_J25_r22")
@@ -109,100 +173,56 @@ def emulation(input_root, t, emu):
 
         # How to pass RNN loose ID?
         if(select):
-            deltaR = 0 
-            for i in range(len(tree.Offline_Matched_Taus)):
-                hist_offhltpt_r.Fill(tree.Offline_Matched_Taus[i].Pt(), 1)
-                if(i == 0):
-                    hist_offhltpt_lead_r.Fill(
-                        tree.Offline_Matched_Taus[0].Pt(), 1)
-                if(i == 1):
-                    hist_offhltpt_sublead_r.Fill(
-                        tree.Offline_Matched_Taus[1].Pt(), 1)
-                    vec0 = tree.Offline_Matched_Taus[0].Vect()
-                    vec1 = tree.Offline_Matched_Taus[1].Vect()
-                    deltaR = vec1.DeltaR(vec0)
-                    hist_offhltptdeltaR.Fill(deltaR)
-            for j in range(len(tree.Off_Matched_TauRNN)):
-                hist_offhltrnn.Fill(tree.Off_Matched_TauRNN[j], 1)
-            for k in range(len(tree.Off_Matched_TauProng)):
-                hist_offhltprong.Fill(tree.Off_Matched_TauProng[k], 1)
+            if L1_1: denominator = denominator+1
 
-            if emu == 0: #Pt
-                select = select and (tree.Offline_Matched_Taus[0].Pt() > 35)
-                select = select and (tree.Offline_Matched_Taus[1].Pt() > 25)
-            if emu == 1: #RNN Medium 
-                for i in range(len(tree.Off_Matched_TauIDm)):
-                    if(tree.Off_Matched_TauIDm[0] == True
-                    and tree.Off_Matched_TauIDm[1] == True):
-                        select = select 
-                    else:
-                        select = False
-            if emu == 2: #DeltaR > 0.3 <3
-                if (deltaR>0.3 and deltaR<3): select = select
-                else: select = False
-            if emu == 3: # Pt RNN Medium
-                select = select and (tree.Offline_Matched_Taus[0].Pt() > 35)
-                select = select and (tree.Offline_Matched_Taus[1].Pt() > 25)
-                for i in range(len(tree.Off_Matched_TauIDl)):
-                    # print(tree.Off_Matched_TauIDl[i])
-                    if(tree.Off_Matched_TauIDm[0] == True
-                    and tree.Off_Matched_TauIDm[1] == True):
-                        select = select 
-                    else:
-                        select = False
-            if emu == 4: # Pt RNN Medium DeltaR
-                select = select and (tree.Offline_Matched_Taus[0].Pt() > 35)
-                select = select and (tree.Offline_Matched_Taus[1].Pt() > 25)
-                for i in range(len(tree.Off_Matched_TauIDm)):
-                    if(tree.Off_Matched_TauIDm[0] == True
-                    and tree.Off_Matched_TauIDm[1] == True):
-                        select = select 
-                    else:
-                        select = False
-                if (deltaR>0.3 and deltaR<3): select = select
-                else: select = False
-
-                
-            if select:
-                if true:
-                    for i in range(len(tree.Offline_Matched_Taus)):
+            EMU_1 = tree_online_PtRNNdR(tree, emu)
+            if L1_1:
+                if EMU_1[emu]:
+                    enumerator_emu = enumerator_emu+1
+                    for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
                         hist_m_offhltpt_r.Fill(
-                            tree.Offline_Matched_Taus[i].Pt(), 1)
+                            tree.TrigMatched_Taus_HLTptfl[i].Pt(), 1)
                         if(i == 0):
                             hist_m_offhltpt_lead_r.Fill(
-                                tree.Offline_Matched_Taus[0].Pt(), 1)
+                                tree.TrigMatched_Taus_HLTptfl[0].Pt(), 1)
                         if(i == 1):
                             hist_m_offhltpt_sublead_r.Fill(
-                                tree.Offline_Matched_Taus[1].Pt(), 1)
-                            vec0 = tree.Offline_Matched_Taus[0].Vect()
-                            vec1 = tree.Offline_Matched_Taus[1].Vect()
+                                tree.TrigMatched_Taus_HLTptfl[1].Pt(), 1)
+                            vec0 = tree.TrigMatched_Taus_HLTptfl[0].Vect()
+                            vec1 = tree.TrigMatched_Taus_HLTptfl[1].Vect()
                             hist_m_offhltptdeltaR.Fill(vec1.DeltaR(vec0))
-                    for j in range(len(tree.Off_Matched_TauRNN)):
-                        hist_m_offhltrnn.Fill(tree.Off_Matched_TauRNN[j], 1)
-                    for k in range(len(tree.Off_Matched_TauProng)):
+                    for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
+                        hist_m_offhltrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j], 1)
+                    for k in range(len(tree.TrigMatched_prong_HLTptfl)):
                         hist_m_offhltprong.Fill(
-                            tree.Off_Matched_TauProng[k], 1)  
+                            tree.TrigMatched_prong_HLTptfl[k], 1)  
                                   
             if L1_1:
                 if HLT_1:
-                    for i in range(len(tree.Offline_Matched_Taus)):
+                    enumerator_hlt = enumerator_hlt+1
+                    for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
                         hist_HLT_offhltpt_r.Fill(
-                            tree.Offline_Matched_Taus[i].Pt(), 1)
+                            tree.TrigMatched_Taus_HLTptfl[i].Pt(), 1)
                         if(i == 0):
                             hist_HLT_offhltpt_lead_r.Fill(
-                                tree.Offline_Matched_Taus[0].Pt(), 1)
+                                tree.TrigMatched_Taus_HLTptfl[0].Pt(), 1)
                         if(i == 1):
                             hist_HLT_offhltpt_sublead_r.Fill(
-                                tree.Offline_Matched_Taus[1].Pt(), 1)
-                            vec0 = tree.Offline_Matched_Taus[0].Vect()
-                            vec1 = tree.Offline_Matched_Taus[1].Vect()
+                                tree.TrigMatched_Taus_HLTptfl[1].Pt(), 1)
+                            vec0 = tree.TrigMatched_Taus_HLTptfl[0].Vect()
+                            vec1 = tree.TrigMatched_Taus_HLTptfl[1].Vect()
                             hist_HLT_offhltptdeltaR.Fill(vec1.DeltaR(vec0))
-                    for j in range(len(tree.Off_Matched_TauRNN)):
-                        hist_HLT_offhltrnn.Fill(tree.Off_Matched_TauRNN[j], 1)
-                    for k in range(len(tree.Off_Matched_TauProng)):
+                    for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
+                        hist_HLT_offhltrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j], 1)
+                    for k in range(len(tree.TrigMatched_prong_HLTptfl)):
                         hist_HLT_offhltprong.Fill(
-                            tree.Off_Matched_TauProng[k], 1)
-
+                            tree.TrigMatched_prong_HLTptfl[k], 1)
+    
+    print("Enumerator Emulation: ", enumerator_emu)
+    print("Enumerator HLT: ", enumerator_hlt)
+    print("Denominator: ", denominator)
+    print(enumerator_emu/denominator)
+    print(enumerator_hlt/denominator)
 
     hltoff.append(hist_offhltrnn)
     hltoff.append(hist_offhltprong)
@@ -222,14 +242,10 @@ def emulation(input_root, t, emu):
     hltoff.append(hist_HLT_offhltpt_lead_r)
     hltoff.append(hist_HLT_offhltpt_sublead_r)
 
-    for i in range(5):
-        hist_print_compare([hltoff[i],hltoff[i+5], hltoff[i+10]],
-            ["off", "emu", "hlt"],
-            list_order[i], t)
-
-
-
-
+    # for i in range(5):
+    #     hist_print_compare([hltoff[i],hltoff[i+5], hltoff[i+10]],
+    #         ["off", "emu", "hlt"],
+    #         list_order[i], t)
 
 def main(i):
     print(i)
@@ -243,6 +259,8 @@ def main(i):
         emulation( "Tau0_PassFail.root", 3 , 3)
     if (i=="4"): # Emulate pt+RNN+DeltaR
         emulation( "Tau0_PassFail.root", 3 , 4)
+    if (i=="5"): # Emulate pt+RNN+DeltaR
+        emulation( "Tau0_PassFail.root", 3 , 5)
 
 if __name__ == "__main__" :
     print("Hello, Start Ploting for Emulation study")
