@@ -26,8 +26,8 @@ r_pt = [50, 0, 250]
 
 emu_order = [
     "Pt",
+    "PtdR",
     "RNN",
-    "Delta_R",
     "Pt+RNN",
     "Pt+RNN+Delta_R"
 ]
@@ -75,6 +75,7 @@ def tree_online_PtRNNdR(tree, emu):
                 passPt = true
                 if ( tree.TrigMatched_rnn_HLTptfl[i]
                 and tree.TrigMatched_rnn_HLTptfl[j]): passPtRNN = true
+                else: continue
 
     if(emu == 4):
         for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
@@ -218,7 +219,7 @@ def emulation(input_root, t, emu):
                         hist_HLT_offhltprong.Fill(
                             tree.TrigMatched_prong_HLTptfl[k], 1)
     
-    print("Enumerator Emulation: ", enumerator_emu)
+    print("Enumerator Emulation ",emu_order[emu],":",enumerator_emu)
     print("Enumerator HLT: ", enumerator_hlt)
     print("Denominator: ", denominator)
     print(enumerator_emu/denominator)
@@ -251,16 +252,15 @@ def main(i):
     print(i)
     if (i=="0"): # Emulate pt only
         emulation( "Tau0_PassFail.root", 3 , 0)
-    if (i=="1"): # Emulate RNN only
+    if (i=="1"): # Emulate ptdR only
         emulation( "Tau0_PassFail.root", 3 , 1)
-    if (i=="2"): # Delta R only
+    if (i=="2"): # Delta RNN only
         emulation( "Tau0_PassFail.root", 3 , 2)
     if (i=="3"): # Emulate pt+RNN
         emulation( "Tau0_PassFail.root", 3 , 3)
     if (i=="4"): # Emulate pt+RNN+DeltaR
         emulation( "Tau0_PassFail.root", 3 , 4)
-    if (i=="5"): # Emulate pt+RNN+DeltaR
-        emulation( "Tau0_PassFail.root", 3 , 5)
+
 
 if __name__ == "__main__" :
     print("Hello, Start Ploting for Emulation study")
