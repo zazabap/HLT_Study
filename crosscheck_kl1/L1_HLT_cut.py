@@ -120,7 +120,7 @@ def ratio_tree_loop_cut_pt( input_root, t ):
 
         for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
             hist_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
-        for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
+        for k in range(len(tree.TrigMatched_prong_HLTptfl)):
             hist_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
 
         # Loop over with L1 cut 
@@ -145,7 +145,7 @@ def ratio_tree_loop_cut_pt( input_root, t ):
                         tree.TrigMatched_Taus_HLTptfl[1].Pt(),1) 
             for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
                 hist_L1_onhltptrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j],1)
-            for k in range(len(tree.TrigMatched_rnn_HLTptfl)):
+            for k in range(len(tree.TrigMatched_prong_HLTptfl)):
                 hist_L1_onhltptprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)
             # Loop over with HLT cut 
             if HLT_1:

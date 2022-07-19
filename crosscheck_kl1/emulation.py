@@ -278,6 +278,22 @@ def emulation(input_root, t, emu):
 
         # How to pass RNN loose ID?
         if(select):
+            for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
+                pt0 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
+                if(pt0 >25):hist_offhltpt_r.Fill(pt0, 1)
+                if(i == 0):
+                    hist_offhltpt_lead_r.Fill(
+                                tree.TrigMatched_Taus_HLTptfl[0].Pt(), 1)
+                if(i == 1):
+                    hist_offhltpt_sublead_r.Fill(
+                                tree.TrigMatched_Taus_HLTptfl[1].Pt(), 1)
+                    vec0 = tree.TrigMatched_Taus_HLTptfl[0].Vect()
+                    vec1 = tree.TrigMatched_Taus_HLTptfl[1].Vect()
+                    hist_offhltptdeltaR.Fill(vec1.DeltaR(vec0))
+            for j in range(len(tree.TrigMatched_rnn_HLTptfl)):
+                    hist_offhltrnn.Fill(tree.TrigMatched_rnn_HLTptfl[j], 1)
+            for k in range(len(tree.TrigMatched_prong_HLTptfl)):
+                    hist_offhltprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)  
             if L1_1: denominator = denominator+1
             EMU_1 = tree_online_PtRNNdR(tree, emu)
             if L1_1:
@@ -321,16 +337,13 @@ def emulation(input_root, t, emu):
                             tree.TrigMatched_prong_HLTptfl[k], 1)
     
     print("Numerator Emulation",emu_order[emu],":",numerator_emu)
-    # print("Numerator HLT: ", numerator_hlt)
-    # print("Denominator: ", denominator)
     print("Efficiency Emu:", numerator_emu/denominator)
-    # print("Efficiency HLT:", numerator_hlt/denominator)
 
-    # hltoff.append(hist_offhltrnn)
-    # hltoff.append(hist_offhltprong)
-    # hltoff.append(hist_offhltptdeltaR)
-    # hltoff.append(hist_offhltpt_lead_r)
-    # hltoff.append(hist_offhltpt_sublead_r)
+    hltoff.append(hist_offhltrnn)
+    hltoff.append(hist_offhltprong)
+    hltoff.append(hist_offhltptdeltaR)
+    hltoff.append(hist_offhltpt_r)
+    hltoff.append(hist_offhltpt_sublead_r)
 
     hltoff.append(hist_m_offhltrnn)
     hltoff.append(hist_m_offhltprong)
@@ -345,8 +358,8 @@ def emulation(input_root, t, emu):
     hltoff.append(hist_HLT_offhltpt_sublead_r)
 
     for i in range(5):
-        hist_print_compare([hltoff[i],hltoff[i+5]],
-            ["emu", "hlt"],
+        hist_print_compare([hltoff[i],hltoff[i+5],hltoff[i+10] ],
+            ["select", "emu", "hlt"],
             list_order[i], t)
 
 
