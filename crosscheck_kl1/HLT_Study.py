@@ -27,7 +27,7 @@ ROOT.gROOT.ForceStyle()
 
 taus = ["passfail","pass"]
 taus = ["r22_Pass", "r22_PassFail", "Tau0_Pass", "Tau0_PassFail"]
-color = [ROOT.kBlack, ROOT.kRed, ROOT.kBlue, ROOT.kGreen]
+color = [ROOT.kBlack,  ROOT.kBlue, ROOT.kGreen,ROOT.kViolet, ROOT.kRed]
 kL = [1,10]
 kL = [1]
 printer = 5000
@@ -137,7 +137,8 @@ list_order = [
         "leading", #14
         "Subleading", #15
         "leading_eta",  #16
-        "Subleading_eta" #17
+        "Subleading_eta", #17
+        "p_T" #18
 ]
 
 leg_pos =[
@@ -158,6 +159,7 @@ leg_pos =[
         ["R", "U", 4], #15
         ["C", "D", 4], #16
         ["C", "D", 4], #17
+        ["R", "U", 4], #18
 ]
 
 x_order = [
@@ -178,6 +180,7 @@ x_order = [
         "p_{T}^{#tau} Subleading",#15
         "#eta leading", #16
         "#eta Subleading",#17
+        "p_{T}^{#tau}", #18
 ]
 
 def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
@@ -191,7 +194,7 @@ def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
         hists_onhltn[h].Draw("same")
         hists_onhltn[h].SetLineColor( color[h])
         hists_onhltn[h].SetLineWidth(2)
-        hists_onhltn[h].SetTitle(";"+x_order[i_pos]+"; Number of online events")
+        hists_onhltn[h].SetTitle(";"+x_order[i_pos]+"; Number of online #tau")
         hists_onhltn[h].GetYaxis().SetTitleOffset(1.05)
         hists_onhltn[h].SetMinimum(0.1)
     posleg( leg_pos[i_pos][0], leg_pos[i_pos][1], leg_pos[i_pos][2])
@@ -233,13 +236,13 @@ def createRatio(h1, h2, min, max):
     h3.SetMinimum(min)
     h3.SetMaximum(max)
     # Set up plot for markers and errors
-    # h3.Sumw2()
-    # h3.SetStats(0)
+    h3.Sumw2()
+    h3.SetStats(0)
     h3.Divide(h2)
  
     # Adjust y-axis settings
     y = h3.GetYaxis()
-    y.SetTitle("ratio r22/Tau0 ") 
+    y.SetTitle("emu/emu") 
     y.SetNdivisions(6)
     y.SetTitleSize(40)
     y.SetTitleFont(43)
@@ -308,7 +311,7 @@ def hist_print_compare_ratio_eff(hists_onhltn, diffhlt, x_label, t):
 def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     c, pad1, pad2 = createCanvasPads()
     pad1.cd()
-    pad1.SetLogy()
+    # pad1.SetLogy()
     i_pos = list_order.index(x_label)
     if (x_label == "Delta_R" or 
         x_label == "leading" or 
@@ -346,13 +349,14 @@ def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     legend.Draw("same")
     
     pad1.Update()
-    h3 = createRatio(hists_onhltn[0],hists_onhltn[1],0.7, 1.1)
+    h3 = createRatio(hists_onhltn[0],hists_onhltn[1],0.5, 1.1)
     x = h3.GetXaxis()
     x.SetTitle(x_order[i_pos])
     pad2.cd()
     h3.Draw("p")
 
-    c.Print(taus[t]+"_"+x_label+".png")
+    # c.Print(taus[t]+"_"+x_label+".png")
+    c.Print(x_label+".png")
     c.Close()
 
 def tree_loop_deltaR( input_root, t):

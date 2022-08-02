@@ -13,7 +13,7 @@ from L1_HLT_cut import *
 taus = ["r22_Pass", "r22_PassFail", "Tau0_Pass", "Tau0_PassFail"]
 list_order = ["RNN_Score","Prong","Delta_R","p_T","Subleading"]
 
-r_pt = [50, 0, 400]
+r_pt = [100, 0, 250]
 
 emu_order = [
     "Pt",
@@ -449,24 +449,28 @@ def emulation_stage(input_root, t):
     hltoff.append(hist_offhltpt_r)
     hltoff.append(hist_offhltpt_sublead_r)
 
+    # pT
     hltoff.append(hist_m1_offhltrnn)
     hltoff.append(hist_m1_offhltprong)
     hltoff.append(hist_m1_offhltptdeltaR)
     hltoff.append(hist_m1_offhltpt_r)
     hltoff.append(hist_m1_offhltpt_sublead_r)
 
+    # pTdR
     hltoff.append(hist_m2_offhltrnn)
     hltoff.append(hist_m2_offhltprong)
     hltoff.append(hist_m2_offhltptdeltaR)
     hltoff.append(hist_m2_offhltpt_r)
     hltoff.append(hist_m2_offhltpt_sublead_r)
 
+    # pTRNN
     hltoff.append(hist_m3_offhltrnn)
     hltoff.append(hist_m3_offhltprong)
     hltoff.append(hist_m3_offhltptdeltaR)
     hltoff.append(hist_m3_offhltpt_r)
     hltoff.append(hist_m3_offhltpt_sublead_r)
 
+    # pTRNNdR
     hltoff.append(hist_m4_offhltrnn)
     hltoff.append(hist_m4_offhltprong)
     hltoff.append(hist_m4_offhltptdeltaR)
@@ -478,6 +482,18 @@ def emulation_stage(input_root, t):
         hist_print_compare([hltoff[i],hltoff[i+5],hltoff[i+10], hltoff[i+15], hltoff[i+20]],
             ["select", "pt", "ptdR", "ptRNN", "ptRNNdR"],
             list_order[i], t)    
+    
+    # hist_print_compare_ratio([hltoff[13], hltoff[3]],
+    # ["ptdR", "select"], "p_T", t)
+
+    # hist_print_compare_ratio([hltoff[18], hltoff[3]],
+    # ["ptRNN", "select"], "p_T", t)
+    
+    # hist_print_compare_ratio([hltoff[23], hltoff[3]],
+    # ["ptRNNdR", "select"], "p_T", t)
+
+    hist_print_compare_ratio([hltoff[18], hltoff[13]],
+    ["ptRNN", "ptdR"], "p_T", t)
 
 
 def emulation(input_root, t, emu):
