@@ -36,6 +36,51 @@ def rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1):
     if(pt0>440 and pt1>440): passPtRNN = true
     return passPtRNN
 
+def tree_online_RNN(tree):
+    passRNN = false
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            pt0 = tree.TrigMatched_Taus_HLTptfl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTptfl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTptfl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): passRNN = true
+    return passRNN
+
+def tree_online_RNNdR(tree):
+    passRNNdR = false
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+            pt0 = tree.TrigMatched_Taus_HLTptfl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTptfl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTptfl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn == false ): continue
+            dR = vec0.DeltaR(vec1)
+            if ( rnn and dR> 0.3 and dR <3.0) : passRNNdR = true            
+    return passRNNdR
+
+def tree_online_dR(tree):
+    passdR = false
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+            dR = vec0.DeltaR(vec1)
+            if ( dR> 0.3 and dR <3.0) : passdR = true            
+    return passdR
+
 def tree_online_PtRNNdR(tree, emu):
     passPt = false
     passPtdR = false
@@ -496,6 +541,98 @@ def emulation_stage(input_root, t):
     ["ptRNN", "ptdR"], "p_T", t)
 
 
+
+def emulation_stage_number(input_root, t):
+    for k in range(len(kL)):
+        if kL[k] == 1:
+            inFile = ROOT.TFile.Open(input_root, "READ")
+
+    print("Start Looping ", taus[t])
+    tree = inFile.Get("analysis")
+    entries = range(tree.GetEntries())
+
+
+    # Selection+ Selection Pass HLT
+    denominator = 0 # entries (pass select + L1)
+    numerator_emu = 0 # entries (pass selection + L1) + (emu/HLT [online taus])
+    numerator_hlt =0  # entries (pass selection + L1) + (emu/HLT [online taus])
+
+    numerator_1 = 0 # pt
+    numerator_2 = 0 # ptdR
+    numerator_3 = 0 # ptRNN
+    numerator_4 = 0 # ptRNNdR
+    numerator_5 = 0 # RNN only
+    numerator_6 = 0 # RNNdR 
+    numerator_7 = 0 # dR
+
+    for entry in entries:
+        tree.GetEntry(entry)
+        L1_1 = getattr(tree, "L1_J25")
+        L1_2 = getattr(tree, "L1_ETA25")
+        # Bit confused about this point of trigger use
+        if taus[t] == "r22_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "r22_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "Tau0_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J25_Tau0"
+        elif taus[t] == "Tau0_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J25_Tau0"
+
+        # Selection
+        select = True
+        select = select and (len(tree.Offline_Matched_Taus) >= 2)
+        if(select):
+            select = select and (tree.Offline_Matched_Taus[0].Pt() > 20)
+            select = select and (tree.Offline_Matched_Taus[1].Pt() > 12)
+        if(len(tree.Off_Matched_TauIDl)<2): continue
+        for i in range(len(tree.Off_Matched_TauIDl)):
+                # print(tree.Off_Matched_TauIDl[i])
+                if(tree.Off_Matched_TauIDl[0] == True
+                 and tree.Off_Matched_TauIDl[1] == True):
+                    select = select 
+                else:
+                    select = False
+        select = select and (L1_1 or L1_2)
+
+        # How to pass RNN loose ID?
+        if(select): 
+            if L1_1: denominator = denominator+1
+            if L1_1:
+                # EMU_1 = tree_online_PtRNNdR(tree, 0)
+                # if EMU_1[0]:
+                #     numerator_1 = numerator_1 +1
+                # EMU_1 = tree_online_PtRNNdR(tree, 1)
+                # if EMU_1[1]:
+                #     numerator_2 = numerator_2 + 1
+                # EMU_1 = tree_online_PtRNNdR(tree, 3)
+                # if EMU_1[3]:
+                #     numerator_3 = numerator_3 + 1
+                # EMU_1 = tree_online_PtRNNdR(tree, 4)
+                # if EMU_1[4]:
+                #     numerator_4 = numerator_4 + 1
+                if tree_online_RNN(tree):
+                    numerator_5 = numerator_5 +1
+                if tree_online_RNNdR(tree):
+                    numerator_6 = numerator_6 +1
+                if tree_online_dR(tree):
+                    numerator_7 = numerator_7 +1
+
+    print("Event level check")
+    # print("pt: ", numerator_1, "percentage: ", numerator_1/denominator )
+    # print("ptdR: ", numerator_2, "percentage: ", numerator_2/denominator)
+    # print("ptRNN: ", numerator_3, "percentage: ", numerator_3/denominator)
+    # print("ptRNNdR: ", numerator_4, "percentage: ", numerator_4/denominator)
+    print("RNN: ", numerator_5, "percentage: ", numerator_5/denominator)
+    print("RNN dR: ", numerator_6, "percentage: ", numerator_6/denominator)
+    print("dR: ", numerator_7, "percentage: ", numerator_7/denominator)
+    print("select: ", denominator)
+
+
 def emulation(input_root, t, emu):
     for k in range(len(kL)):
         if kL[k] == 1:
@@ -813,7 +950,12 @@ def main(i):
     
     HLT("Tau0_Pass.root",2)
 
+def test(i):
+    emulation_stage_number("Tau0_PassFail.root", 3)
+
+
 
 if __name__ == "__main__" :
     print("Hello, Start Ploting for Emulation study")
-    main(sys.argv[1])
+    test(sys.argv[1])
+    # main(sys.argv[1])
