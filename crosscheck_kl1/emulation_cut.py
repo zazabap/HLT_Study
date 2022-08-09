@@ -31,8 +31,8 @@ def tree_online_pt_i(tree):
         for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
             if (i==j): continue
             if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 25): continue
-            indices.add(i)
-            indices.add(j)
+            indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+            indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
     
 def tree_online_ptdR_i(tree):
@@ -46,16 +46,60 @@ def tree_online_ptdR_i(tree):
             vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
             dR = vec0.DeltaR(vec1)
             if (  dR> 0.3 and dR <3.0) : 
-                indices.add(i)
-                indices.add(j)
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
 
 def tree_online_RNN_i(tree):
     indices = set()
-    for i in range(len(tree.TrigMatched_rnn_HLTptfl)):
-        if (tree.TrigMatched_rnn_HLTptfl[i]): 
-            indices.add(i)
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            pt0 = tree.TrigMatched_Taus_HLTptfl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTptfl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTptfl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): 
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
+
+def tree_online_dR_i(tree):
+    indices = set()
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+            dR = vec0.DeltaR(vec1)
+            if ( dR> 0.3 and dR <3.0) : 
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())           
+    return indices 
+
+def tree_online_RNNdR_i(tree):
+    indices = set()
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+            pt0 = tree.TrigMatched_Taus_HLTptfl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTptfl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTptfl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn == false ): continue
+            dR = vec0.DeltaR(vec1)
+            if ( rnn and dR> 0.3 and dR <3.0) : 
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())        
+    return indices    
 
 def tree_online_ptRNN_i(tree):
     indices = set()
@@ -75,8 +119,8 @@ def tree_online_ptRNN_i(tree):
             rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
             rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
             if (rnn): 
-                indices.add(i)
-                indices.add(j)
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
 
 def tree_online_ptRNNdR_i(tree):
@@ -100,8 +144,8 @@ def tree_online_ptRNNdR_i(tree):
             else: continue
             dR = vec0.DeltaR(vec1)
             if (  dR> 0.3 and dR <3.0) : 
-                indices.add(i)
-                indices.add(j)
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
 
 def emulation_passed_taus(input_root, t):
@@ -173,6 +217,13 @@ def emulation_passed_taus(input_root, t):
         "HLT_offhltpt_sublead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_HLT_offhltptdeltaR = ROOT.TH1D("HLT_offhltptdeltaR", "", 50, -1, 4)
 
+    hist_m5_on_emu_pt_r = ROOT.TH1D(
+        "m5_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+    hist_m6_on_emu_pt_r = ROOT.TH1D(
+        "m6_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+    hist_m7_on_emu_pt_r = ROOT.TH1D(
+        "m7_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+
     # Selection+ Selection Pass HLT
     denominator = 0 # entries (pass select + L1)
     numerator_emu = 0 # entries (pass selection + L1) + (emu/HLT [online taus])
@@ -226,6 +277,10 @@ def emulation_passed_taus(input_root, t):
             i_ptRNN = tree_online_ptRNN_i(tree)
             i_ptRNNdR = tree_online_ptRNNdR_i(tree)
 
+            i_dR = tree_online_dR_i(tree)
+            i_RNN = tree_online_RNN_i(tree)
+            i_RNNdR = tree_online_RNNdR_i(tree)
+
             for i in range(len(tree.TrigMatched_Taus_HLTptfl)):
                 pt0 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
                 hist_offhltpt_r.Fill(pt0, 1)
@@ -245,13 +300,21 @@ def emulation_passed_taus(input_root, t):
             if L1_1: denominator = denominator+1
             if L1_1:
                 for i in i_pt:
-                    hist_m1_on_emu_pt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
+                    hist_m1_on_emu_pt_r.Fill(i, 1)
+                    max_pt = max(i_pt)
+                    
                 for i in i_ptdR:
-                    hist_m2_on_emu_pt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
+                    hist_m2_on_emu_pt_r.Fill(i, 1)
                 for i in i_ptRNN:
-                    hist_m3_on_emu_pt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
+                    hist_m3_on_emu_pt_r.Fill(i, 1)
                 for i in i_ptRNNdR:
-                    hist_m4_on_emu_pt_r.Fill(tree.TrigMatched_Taus_HLTptfl[i].Pt(),1)
+                    hist_m4_on_emu_pt_r.Fill(i, 1)
+                for i in i_dR:
+                    hist_m5_on_emu_pt_r.Fill(i, 1)
+                for i in i_RNN:
+                    hist_m6_on_emu_pt_r.Fill(i, 1)
+                for i in i_RNNdR:
+                    hist_m7_on_emu_pt_r.Fill(i, 1)
 
     print("Event level check")
     print("pt: ", numerator_1, "percentage: ", numerator_1/denominator )
@@ -275,11 +338,22 @@ def emulation_passed_taus(input_root, t):
     hlt_pt_emu.append(hist_m3_on_emu_pt_r)
     hlt_pt_emu.append(hist_m4_on_emu_pt_r)
 
+    hlt_emu = []
+    hlt_emu.append(hist_offhltpt_r)
+    hlt_emu.append(hist_m5_on_emu_pt_r)
+    hlt_emu.append(hist_m6_on_emu_pt_r)
+    hlt_emu.append(hist_m7_on_emu_pt_r)
 
-    for i in range(5):
-        hist_print_compare(hlt_pt_emu,
-            ["select", "pt", "ptdR", "ptRNN", "ptRNNdR"],
-            list_order[i], t)    
+
+    # hist_print_compare(hlt_pt_emu,
+    #         ["select", "pt", "ptdR", "ptRNN", "ptRNNdR"],
+    #        "p_T", t)    
+
+    hist_print_compare(hlt_emu,
+                ["select","dR", "RNN", "RNNdR"],
+                "p_T", t)
+    
+    
     
     # hist_print_compare_ratio([hltoff[13], hltoff[3]],
     # ["ptdR", "select"], "p_T", t)
