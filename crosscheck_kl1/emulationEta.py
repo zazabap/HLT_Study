@@ -283,11 +283,6 @@ def emulation(input_root, t, emu):
         "HLT_offHLTeta_sublead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_HLT_offHLTetadeltaR = ROOT.TH1D("HLT_offHLTetadeltaR", "", 50, -1, 4)
 
-    # Selection+ Selection Pass HLT
-    numerator_5 = 0
-    numerator_6 = 0
-    numerator_7 = 0
-
     denominator = 0 # entries (pass select + L1)
     numerator_emu = 0 # entries (pass selection + L1) + (emu/HLT [online taus])
     numerator_hlt =0  # entries (pass selection + L1) + (emu/HLT [online taus])
@@ -345,12 +340,6 @@ def emulation(input_root, t, emu):
             if L1_1: denominator = denominator+1
             EMU_1 = tree_online_PtRNNdR(tree, emu)
             if L1_1:
-                if tree_online_RNN(tree):
-                    numerator_5 = numerator_5 +1
-                if tree_online_RNNdR(tree):
-                    numerator_6 = numerator_6 +1
-                if tree_online_dR(tree):
-                    numerator_7 = numerator_7 +1
                 if EMU_1[emu]:
                     numerator_emu = numerator_emu+1
                     for i in range(len(tree.TrigMatched_Taus_HLTetafl)):
@@ -393,13 +382,6 @@ def emulation(input_root, t, emu):
     
     print("Numerator Emulation",emu_order[emu],":",numerator_emu)
     print("Efficiency Emu:", numerator_emu/denominator)
-
-    print("RNN Emulation:",numerator_5)
-    print("Efficiency RNN:", numerator_5/denominator)
-    print("RNNdR Emulation:",numerator_6)
-    print("Efficiency RNNdR:", numerator_6/denominator)
-    print("dR Emulation:",numerator_7)
-    print("Efficiency dR:", numerator_7/denominator)
 
     hltoff.append(hist_offhltrnn)
     hltoff.append(hist_offhltprong)
@@ -567,7 +549,8 @@ def HLT(input_root, t):
 #     print("RNN: ", numerator_5, "percentage: ", numerator_5/denominator)
 #     print("select: ", denominator)
 
-def emulation_stage_number(input_root, t):
+
+def emulation_efficiency(input_root, t):
     for k in range(len(kL)):
         if kL[k] == 1:
             inFile = ROOT.TFile.Open(input_root, "READ")
@@ -575,17 +558,18 @@ def emulation_stage_number(input_root, t):
     print("Start Looping ", taus[t])
     tree = inFile.Get("analysis")
     entries = range(tree.GetEntries())
+   
+    # Selection+ Selection Pass HLT
+    numerator_1 = 0
+    numerator_2 = 0
+    numerator_3 = 0
+    numerator_4 = 0
+    numerator_5 = 0
+    numerator_6 = 0
+    numerator_7 = 0
 
     denominator = 0 # entries (pass select + L1)
-    numerator_emu = 0 # entries (pass selection + L1) + (emu/HLT [online taus])
     numerator_hlt =0  # entries (pass selection + L1) + (emu/HLT [online taus])
-
-    numerator_1 = 0 # pt
-    numerator_2 = 0 # ptdR
-    numerator_3 = 0 # ptRNN
-    numerator_4 = 0 # ptRNNdR
-    numerator_5 = 0 # RNN only
-
     for entry in entries:
         tree.GetEntry(entry)
         L1_2 = getattr(tree, "L1_J25")
@@ -619,37 +603,41 @@ def emulation_stage_number(input_root, t):
                 else:
                     select = False
         select = select and (L1_1 or L1_2)
-
         # How to pass RNN loose ID?
         if(select):
-            denominator = denominator + 1 
+            if L1_1: denominator = denominator+1
+            
             if L1_1:
                 EMU_1 = tree_online_PtRNNdR(tree, 0)
                 if EMU_1[0]:
                     numerator_1 = numerator_1 +1
                 EMU_1 = tree_online_PtRNNdR(tree, 1)
                 if EMU_1[1]:
-                    numerator_2 = numerator_2 + 1
+                    numerator_2 = numerator_2 +1
                 EMU_1 = tree_online_PtRNNdR(tree, 3)
                 if EMU_1[3]:
-                    numerator_3 = numerator_3 + 1
+                    numerator_3 = numerator_3 +1
                 EMU_1 = tree_online_PtRNNdR(tree, 4)
                 if EMU_1[4]:
-                    numerator_4 = numerator_4 + 1
+                    numerator_4 = numerator_4 +1                
                 if tree_online_RNN(tree):
                     numerator_5 = numerator_5 +1
+                if tree_online_RNNdR(tree):
+                    numerator_6 = numerator_6 +1
+                if tree_online_dR(tree):
+                    numerator_7 = numerator_7 +1
 
-    print("Event level check")
-    print("pt: ", numerator_1, "percentage: ", numerator_1/denominator )
-    print("ptdR: ", numerator_2, "percentage: ", numerator_2/denominator)
-    print("ptRNN: ", numerator_3, "percentage: ", numerator_3/denominator)
-    print("ptRNNdR: ", numerator_4, "percentage: ", numerator_4/denominator)
-    print("RNN: ", numerator_5, "percentage: ", numerator_5/denominator)
-    print("select: ", denominator)
+            if L1_1 and HLT_1 and tree_online_PtRNNdR(tree,0):
+                    numerator_hlt = numerator_hlt+1
     
 
-
-
+    print("pt     ", numerator_1, "percentage: ", numerator_1/denominator)
+    print("ptdR   ", numerator_2, "percentage: ", numerator_2/denominator)
+    print("ptRNN  ", numerator_3, "percentage: ", numerator_3/denominator)
+    print("ptRNNdR", numerator_4, "percentage: ", numerator_4/denominator)
+    print("RNN    ", numerator_5, "percentage: ", numerator_5/denominator)
+    print("RNNdR  ", numerator_6, "percentage: ", numerator_6/denominator)
+    print("dR     ", numerator_7, "percentage: ", numerator_7/denominator)
 
 
 def main(i):
@@ -669,10 +657,10 @@ def main(i):
 
 
 def test():
-    emulation_stage_number("Tau0_PassFail.root", 3)
+    emulation_efficiency("Tau0_PassFail.root", 3)
 
 
 if __name__ == "__main__" :
     print("Hello, Start Ploting for Emulation study")
     test()
-    main(sys.argv[1])
+    # main(sys.argv[1])

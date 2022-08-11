@@ -603,18 +603,18 @@ def emulation_stage_number(input_root, t):
         if(select): 
             if L1_1: denominator = denominator+1
             if L1_1:
-                # EMU_1 = tree_online_PtRNNdR(tree, 0)
-                # if EMU_1[0]:
-                #     numerator_1 = numerator_1 +1
-                # EMU_1 = tree_online_PtRNNdR(tree, 1)
-                # if EMU_1[1]:
-                #     numerator_2 = numerator_2 + 1
-                # EMU_1 = tree_online_PtRNNdR(tree, 3)
-                # if EMU_1[3]:
-                #     numerator_3 = numerator_3 + 1
-                # EMU_1 = tree_online_PtRNNdR(tree, 4)
-                # if EMU_1[4]:
-                #     numerator_4 = numerator_4 + 1
+                EMU_1 = tree_online_PtRNNdR(tree, 0)
+                if EMU_1[0]:
+                    numerator_1 = numerator_1 +1
+                EMU_1 = tree_online_PtRNNdR(tree, 1)
+                if EMU_1[1]:
+                    numerator_2 = numerator_2 + 1
+                EMU_1 = tree_online_PtRNNdR(tree, 3)
+                if EMU_1[3]:
+                    numerator_3 = numerator_3 + 1
+                EMU_1 = tree_online_PtRNNdR(tree, 4)
+                if EMU_1[4]:
+                    numerator_4 = numerator_4 + 1
                 if tree_online_RNN(tree):
                     numerator_5 = numerator_5 +1
                 if tree_online_RNNdR(tree):
@@ -623,10 +623,10 @@ def emulation_stage_number(input_root, t):
                     numerator_7 = numerator_7 +1
 
     print("Event level check")
-    # print("pt: ", numerator_1, "percentage: ", numerator_1/denominator )
-    # print("ptdR: ", numerator_2, "percentage: ", numerator_2/denominator)
-    # print("ptRNN: ", numerator_3, "percentage: ", numerator_3/denominator)
-    # print("ptRNNdR: ", numerator_4, "percentage: ", numerator_4/denominator)
+    print("pt: ", numerator_1, "percentage: ", numerator_1/denominator )
+    print("ptdR: ", numerator_2, "percentage: ", numerator_2/denominator)
+    print("ptRNN: ", numerator_3, "percentage: ", numerator_3/denominator)
+    print("ptRNNdR: ", numerator_4, "percentage: ", numerator_4/denominator)
     print("RNN: ", numerator_5, "percentage: ", numerator_5/denominator)
     print("RNN dR: ", numerator_6, "percentage: ", numerator_6/denominator)
     print("dR: ", numerator_7, "percentage: ", numerator_7/denominator)
