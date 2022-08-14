@@ -14,64 +14,6 @@ emu_order = [
     "Pt+RNN+Delta_R"
 ]
 
-def rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1):
-    passPtRNN = false
-    if(pt0<=280 and pt1<=280): passPtRNN = rnn_m_0 and rnn_m_1 
-    if(pt0<=280 and pt1>280 and pt1<=440): passPtRNN = rnn_m_0 and rnn_l_1
-    if(pt0>280 and pt0<=440 and pt1<=280): passPtRNN = rnn_l_0 and rnn_m_1
-    if(pt0>280 and pt0<=440 and pt1>280 and pt1<=440): passPtRNN = rnn_l_0 and rnn_l_1
-    if(pt0<=280 and pt1>440): passPtRNN = rnn_m_0 
-    if(pt0>440 and pt1<=280): passPtRNN = rnn_m_1 
-    if(pt0>440 and pt1>280 and pt1<=440): passPtRNN = rnn_l_1
-    if(pt0>280 and pt0<=440 and pt1>440): passPtRNN = rnn_l_0   
-    if(pt0>440 and pt1>440): passPtRNN = true
-    return passPtRNN
-
-def tree_online_RNN(tree):
-    passRNN = false
-    for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-        for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-            if (i==j): continue
-            pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
-            pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
-            rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
-            rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
-            rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
-            rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
-            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
-            if (rnn): passRNN = true
-    return passRNN
-
-def tree_online_RNNdR(tree):
-    passRNNdR = false
-    for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-        for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-            if (i==j): continue
-            vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
-            vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
-            pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
-            pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
-            rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
-            rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
-            rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
-            rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
-            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
-            if (rnn == false ): continue
-            dR = vec0.DeltaR(vec1)
-            if ( rnn and dR> 0.3 and dR <3.0) : passRNNdR = true            
-    return passRNNdR
-
-def tree_online_dR(tree):
-    passdR = false
-    for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-        for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-            if (i==j): continue
-            vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
-            vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
-            dR = vec0.DeltaR(vec1)
-            if ( dR> 0.3 and dR <3.0) : passdR = true            
-    return passdR
-
 def PtRNNdR_threshold(tree):
     p1 = [false, false, false,
           false, false, false, 
@@ -101,81 +43,6 @@ def PtRNNdR_threshold(tree):
                 if (  dR> 0.3 ) : p1[c] =true
         c = c+1
     return p1 
-
-def tree_online_PtRNNdR_leading(tree, emu, lead, slead ):
-    passPt = false
-    passPtdR = false
-    passRNN = false
-    passPtRNN = false
-    passPtRNNdR = false
-
-    if(emu == 0): 
-        for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-            if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < lead): continue
-            for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-                if (i==j): continue
-                if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < slead): continue
-                passPt = true
-    
-    if(emu == 1):
-        for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-            if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < lead): continue
-            for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-                if (i==j): continue
-                if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < slead): continue
-                vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
-                vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
-                dR = vec0.DeltaR(vec1)
-                if (  dR> 0.3 and dR <3.0) : 
-                    passPtdR = true
-
-    if(emu == 2):
-        for i in range(len(tree.TrigMatched_rnn_HLTetafl)):
-            if (tree.TrigMatched_rnn_HLTetafl[i]): passRNN = true
-
-
-    if(emu == 3):
-        for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-            if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < lead): continue
-            for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-                if (i==j): continue
-                if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < slead): continue
-                vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
-                vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
-                passPt = true
-                pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
-                pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
-                rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
-                rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
-                rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
-                rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
-                rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
-                if (rnn): passPtRNN = true
-
-    if(emu == 4):
-        for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-            if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < lead): continue
-            for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
-                if (i==j): continue
-                if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < slead): continue
-                vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
-                vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
-                passPt = true
-                pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
-                pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
-                rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
-                rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
-                rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
-                rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
-                rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
-                if (rnn): passPtRNN = true
-                else: continue
-                dR = vec0.DeltaR(vec1)
-                if (  dR> 0.3 and dR <3.0) : passPtRNNdR = true
-    return [passPt,passPtdR,passRNN, passPtRNN, passPtRNNdR]
-
-
-
 
 def emulation_stage_number(input_root, t):
     for k in range(len(kL)):
@@ -251,26 +118,6 @@ def emulation_stage_number(input_root, t):
                 if p1[6] : numerator_7 = numerator_7 + 1
                 if p1[7] : numerator_8 = numerator_8 + 1
                 if p1[8] : numerator_9 = numerator_9 + 1
-
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 25, 15)
-                # if EMU_1[4]: numerator_1 = numerator_1 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 30, 15)
-                # if EMU_1[4]: numerator_2 = numerator_2 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 35, 15)
-                # if EMU_1[4]: numerator_3 = numerator_3 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 25, 20)
-                # if EMU_1[4]: numerator_4 = numerator_4 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 30, 20)
-                # if EMU_1[4]: numerator_5 = numerator_5 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 35, 20)
-                # if EMU_1[4]: numerator_6 = numerator_6 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 25, 25)
-                # if EMU_1[4]: numerator_7 = numerator_7 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 30, 25)
-                # if EMU_1[4]: numerator_8 = numerator_8 + 1
-                # EMU_1 = tree_online_PtRNNdR_leading(tree, 4, 35, 25)
-                # if EMU_1[4]: numerator_9 = numerator_9 + 1
-
 
     print("Event level check ptRNNdR")
     print("25 15", numerator_1, "percentage: ", numerator_1/denominator)
