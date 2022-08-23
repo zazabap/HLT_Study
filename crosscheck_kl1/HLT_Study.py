@@ -359,6 +359,9 @@ def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     c.Print(x_label+".png")
     c.Close()
 
+def hist_efficiency_gain( ):
+    print("Done Efficiency Gain")
+
 def tree_loop_deltaR( input_root, t):
     for k in range(len(kL)):
         if kL[k] == 1:
@@ -570,6 +573,9 @@ def tree_loop_hltpt( input_root, t ):
         print("Efficiency eta/Off",a[2]/a[0])
         print("Efficiency eta/pt", a[2]/a[1])
 
+##############Some Graph for Calculate Percentage Gain##############################################
+
+    
 
 def main():
     #tree_loop_deltaR("r22_Pass.root", 0)

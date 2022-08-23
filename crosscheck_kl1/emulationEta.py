@@ -69,7 +69,7 @@ def tree_online_RNNdR(tree):
             rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
             if (rnn == false ): continue
             dR = vec0.DeltaR(vec1)
-            if ( rnn and dR> 0.3 and dR <3.0) : passRNNdR = true            
+            if ( rnn and dR> 0.3 ) : passRNNdR = true            
     return passRNNdR
 
 def tree_online_dR(tree):

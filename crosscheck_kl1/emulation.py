@@ -38,6 +38,7 @@ def rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1):
 
 def tree_online_RNN(tree):
     passRNN = false
+
     for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
         for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
             if (i==j): continue
@@ -65,9 +66,9 @@ def tree_online_RNNdR(tree):
             rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
             rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
             rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
-            if (rnn == false ): continue
-            dR = vec0.DeltaR(vec1)
-            if ( rnn and dR> 0.3 and dR <3.0) : passRNNdR = true            
+            if (rnn == true ): 
+                dR = vec0.DeltaR(vec1)
+                if ( dR> 0.3 and dR <3.0) : passRNNdR = true            
     return passRNNdR
 
 def tree_online_dR(tree):
@@ -152,29 +153,6 @@ def tree_online_PtRNNdR(tree, emu):
                 dR = vec0.DeltaR(vec1)
                 if (  dR> 0.3 and dR <3.0) : passPtRNNdR = true
     return [passPt,passPtdR,passRNN, passPtRNN, passPtRNNdR] 
-
-# def tree_online_RNNdR(tree):
-#         if(emu == 4):
-#         for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
-#             if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < 35): continue
-#             for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
-#                 if (i==j): continue
-#                 if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 25): continue
-#                 vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
-#                 vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
-#                 passPt = true
-#                 pt0 = tree.TrigMatched_Taus_HLTptfl[j].Pt()
-#                 pt1 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
-#                 rnn_m_0 = tree.TrigMatched_TauIDm_HLTptfl[j]
-#                 rnn_m_1 = tree.TrigMatched_TauIDm_HLTptfl[i]
-#                 rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
-#                 rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
-#                 rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
-#                 if (rnn): passPtRNN = true
-#                 else: continue
-#                 dR = vec0.DeltaR(vec1)
-#                 if (  dR> 0.3 and dR <3.0) : passPtRNNdR = true
-#     return [passPt,passPtdR,passRNN, passPtRNN, passPtRNNdR] 
 
 def fill_hist_pt(tree, emu):
     entries = range(tree.GetEntries())
@@ -624,12 +602,12 @@ def emulation_stage_number(input_root, t):
 
     print("Event level check")
     print("pt: ", numerator_1, "percentage: ", numerator_1/denominator )
+    print("dR: ", numerator_7, "percentage: ", numerator_7/denominator)
+    print("RNN: ", numerator_5, "percentage: ", numerator_5/denominator)
     print("ptdR: ", numerator_2, "percentage: ", numerator_2/denominator)
     print("ptRNN: ", numerator_3, "percentage: ", numerator_3/denominator)
-    print("ptRNNdR: ", numerator_4, "percentage: ", numerator_4/denominator)
-    print("RNN: ", numerator_5, "percentage: ", numerator_5/denominator)
     print("RNN dR: ", numerator_6, "percentage: ", numerator_6/denominator)
-    print("dR: ", numerator_7, "percentage: ", numerator_7/denominator)
+    print("ptRNNdR: ", numerator_4, "percentage: ", numerator_4/denominator)
     print("select: ", denominator)
 
 
@@ -920,7 +898,6 @@ def HLT(input_root, t):
     hltoff.append(hist_offhltpt_r)
     hltoff.append(hist_offhltpt_sublead_r)
 
-
     hltoff.append(hist_HLT_offhltrnn)
     hltoff.append(hist_HLT_offhltprong)
     hltoff.append(hist_HLT_offhltptdeltaR)
@@ -952,7 +929,6 @@ def main(i):
 
 def test(i):
     emulation_stage_number("Tau0_PassFail.root", 3)
-
 
 
 if __name__ == "__main__" :

@@ -148,7 +148,7 @@ def tree_online_ptRNNdR_i(tree):
                 indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
 
-def emulation_passed_taus(input_root, t):
+def emulation_passed_taus_pt(input_root, t):
     for k in range(len(kL)):
         if kL[k] == 1:
             inFile = ROOT.TFile.Open(input_root, "READ")
@@ -169,8 +169,7 @@ def emulation_passed_taus(input_root, t):
 
     hist_m1_on_emu_rnn = ROOT.TH1D("m1_on_emu__rnn", "", 50, 0, 1)
     hist_m1_on_emu_prong = ROOT.TH1D("m1_on_emu__prong", "", 10, 0, 10)
-    hist_m1_on_emu_pt_r = ROOT.TH1D(
-        "m1_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+
     hist_m1_on_emu_pt_lead_r = ROOT.TH1D(
         "m1_on_emu_pt_lead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_m1_on_emu_pt_sublead_r = ROOT.TH1D(
@@ -179,8 +178,7 @@ def emulation_passed_taus(input_root, t):
 
     hist_m2_on_emu_rnn = ROOT.TH1D("m2_on_emu__rnn", "", 50, 0, 1)
     hist_m2_on_emu_prong = ROOT.TH1D("m2_on_emu__prong", "", 10, 0, 10)
-    hist_m2_on_emu_pt_r = ROOT.TH1D(
-        "m2_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+
     hist_m2_on_emu_pt_lead_r = ROOT.TH1D(
         "m2_on_emu_pt_lead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_m2_on_emu_pt_sublead_r = ROOT.TH1D(
@@ -189,8 +187,7 @@ def emulation_passed_taus(input_root, t):
 
     hist_m3_on_emu_rnn = ROOT.TH1D("m3_on_emu__rnn", "", 50, 0, 1)
     hist_m3_on_emu_prong = ROOT.TH1D("m3_on_emu__prong", "", 10, 0, 10)
-    hist_m3_on_emu_pt_r = ROOT.TH1D(
-        "m3_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+
     hist_m3_on_emu_pt_lead_r = ROOT.TH1D(
         "m3_on_emu_pt_lead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_m3_on_emu_pt_sublead_r = ROOT.TH1D(
@@ -199,8 +196,7 @@ def emulation_passed_taus(input_root, t):
 
     hist_m4_on_emu_rnn = ROOT.TH1D("m4_on_emu__rnn", "", 50, 0, 1)
     hist_m4_on_emu_prong = ROOT.TH1D("m4_on_emu__prong", "", 10, 0, 10)
-    hist_m4_on_emu_pt_r = ROOT.TH1D(
-        "m4_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+
     hist_m4_on_emu_pt_lead_r = ROOT.TH1D(
         "m4_on_emu_pt_lead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_m4_on_emu_pt_sublead_r = ROOT.TH1D(
@@ -217,13 +213,21 @@ def emulation_passed_taus(input_root, t):
         "HLT_offhltpt_sublead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_HLT_offhltptdeltaR = ROOT.TH1D("HLT_offhltptdeltaR", "", 50, -1, 4)
 
+
+    hist_m1_on_emu_pt_r = ROOT.TH1D(
+        "m1_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+    hist_m2_on_emu_pt_r = ROOT.TH1D(
+        "m2_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+    hist_m3_on_emu_pt_r = ROOT.TH1D(
+        "m3_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
+    hist_m4_on_emu_pt_r = ROOT.TH1D(
+        "m4_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_m5_on_emu_pt_r = ROOT.TH1D(
         "m5_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_m6_on_emu_pt_r = ROOT.TH1D(
         "m6_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_m7_on_emu_pt_r = ROOT.TH1D(
         "m7_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
-
     hist_l1_on_emu_pt_r = ROOT.TH1D(
         "l1_on_emu_pt_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_l2_on_emu_pt_r = ROOT.TH1D(
@@ -314,6 +318,14 @@ def emulation_passed_taus(input_root, t):
                     hist_offhltprong.Fill(tree.TrigMatched_prong_HLTptfl[k], 1)  
             if L1_1: denominator = denominator+1
             if L1_1:
+                if len(i_pt) > 0 : i_pt.remove(max(i_pt))
+                if len(i_ptdR) > 0 : i_ptdR.remove(max(i_ptdR))
+                if len(i_ptRNN) > 0 : i_ptRNN.remove(max(i_ptRNN))
+                if len(i_ptRNNdR) > 0 : i_ptRNNdR.remove(max(i_ptRNNdR))
+                if len(i_dR) > 0 :  i_dR.remove(max(i_dR))
+                if len(i_RNN) > 0 : i_RNN.remove(max(i_RNN))
+                if len(i_RNNdR) > 0 : i_RNNdR.remove(max(i_RNNdR))
+
                 if len(i_pt) > 0 : hist_l1_on_emu_pt_r.Fill(max(i_pt), 1)
                 if len(i_ptdR) > 0 : hist_l2_on_emu_pt_r.Fill(max(i_ptdR), 1)
                 if len(i_ptRNN) > 0 : hist_l3_on_emu_pt_r.Fill(max(i_ptRNN), 1)
@@ -386,6 +398,8 @@ def emulation_passed_taus(input_root, t):
     #             ["select","dR", "RNN", "RNNdR"],
     #             "p_T", t)
 
+    # Plot for leading and subleading 
+
     # hist_print_compare(hlt_l_pt_emu,
     #             ["select", "pt", "ptdR", "ptRNN", "ptRNNdR"],
     #                 "p_T", t)
@@ -407,13 +421,10 @@ def emulation_passed_taus(input_root, t):
     # ["ptRNN", "ptdR"], "p_T", t)
 
 
-def main(i):
-    emulation_passed_taus("Tau0_PassFail.root", 3)
-    
 
 
 if __name__ == "__main__" :
     print("Hello, Start Plotting for Emulation study")
-    emulation_passed_taus("Tau0_PassFail.root", 3)
+    emulation_passed_taus_pt("Tau0_PassFail.root", 3)
 
     # main(sys.argv[1])

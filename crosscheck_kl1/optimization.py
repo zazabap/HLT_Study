@@ -17,9 +17,12 @@ def PtRNNdR_threshold(tree):
     p1 = [false, false, false,
           false, false, false, 
           false, false, false]
-    threshold = [ (25, 15), (30, 15), (35, 15),
-                  (25, 20), (30, 20), (35, 20),   
-                  (25, 25), (30, 25), (35, 25)]
+    # threshold = [ (25, 15), (30, 15), (35, 15),
+    #               (25, 20), (30, 20), (35, 20),   
+    #               (25, 25), (30, 25), (35, 25)]
+    threshold = [ (40, 15), (45, 15), (50, 15),
+                  (40, 20), (45, 20), (50, 20),   
+                  (40, 25), (45, 25), (50, 25)]
     c = 0
     for lead, sublead in threshold:
         for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
@@ -43,7 +46,23 @@ def PtRNNdR_threshold(tree):
         c = c+1
     return p1 
 
-def emulation_stage_number(input_root, t):
+def PtHLT_threshold(tree):
+    p1 = [false, false, false]
+    threshold = [ (35, 15), (35, 20), (35, 25)]
+    threshold = [ (50, 15), (50, 20), (50, 25)]
+    c = 0
+
+    for lead, sublead in threshold:
+        for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < lead): continue
+            for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+                if (i==j): continue
+                if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < sublead): continue
+                p1[c] =true
+        c = c+1
+    return p1 
+
+def threshold_optimization_emu(input_root, t):
     for k in range(len(kL)):
         if kL[k] == 1:
             inFile = ROOT.TFile.Open(input_root, "READ")
@@ -130,6 +149,73 @@ def emulation_stage_number(input_root, t):
     print("35 25", numerator_9, "percentage: ", numerator_9/denominator)
 
 
+def threshold_optimization_hlt(input_root, t):
+    for k in range(len(kL)):
+        if kL[k] == 1:
+            inFile = ROOT.TFile.Open(input_root, "READ")
+
+    print("Start Looping ", taus[t])
+    tree = inFile.Get("analysis")
+    entries = range(tree.GetEntries())
+
+    # Selection+ Selection Pass HLT
+    denominator = 0 # entries (pass select + L1)
+    numerator_hlt =0  # entries (pass selection + L1) + (emu/HLT [online taus])
+    numerator_hlt_check = 0 # entry checks before plot
+    numerator_1 = 0
+    numerator_2 = 0
+    numerator_3 = 0
+
+    for entry in entries:
+        tree.GetEntry(entry)
+        L1_1 = getattr(tree, "L1_J25")
+        L1_2 = getattr(tree, "L1_ETA25")
+        # Bit confused about this point of trigger use
+        if taus[t] == "r22_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "r22_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "Tau0_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J25_Tau0"
+        elif taus[t] == "Tau0_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J25_Tau0"
+
+        # Selection
+        select = True
+        select = select and (len(tree.Offline_Matched_Taus) >= 2)
+        if(select):
+            select = select and (tree.Offline_Matched_Taus[0].Pt() > 20)
+            select = select and (tree.Offline_Matched_Taus[1].Pt() > 12)
+        if(len(tree.Off_Matched_TauIDl)<2): continue
+        for i in range(len(tree.Off_Matched_TauIDl)):
+                # print(tree.Off_Matched_TauIDl[i])
+                if(tree.Off_Matched_TauIDl[0] == True
+                 and tree.Off_Matched_TauIDl[1] == True):
+                    select = select 
+                else:
+                    select = False
+        select = select and (L1_1 or L1_2)
+
+        if(select):
+            if L1_1: denominator = denominator+1
+            if L1_1 and HLT_1:
+                p1 = PtHLT_threshold(tree)
+                if p1[0] : numerator_1 = numerator_1 + 1
+                if p1[1] : numerator_2 = numerator_2 + 1
+                if p1[2] : numerator_3 = numerator_3 + 1
+                
+    print("35 15", numerator_1, "percentage: ", numerator_1/denominator )
+    print("35 20", numerator_2, "percentage: ", numerator_2/denominator)
+    print("35 25", numerator_3, "percentage: ", numerator_3/denominator)
+
+    
+
+
 if __name__ == "__main__" :
     print("Hello, Start Optimization Symmetric Option")
-    emulation_stage_number( "Tau0_PassFail.root", 3)
+    threshold_optimization_hlt("Tau0_Pass.root",2)
+    threshold_optimization_emu("Tau0_PassFail.root", 3)
