@@ -17,12 +17,12 @@ def PtRNNdR_threshold(tree):
     p1 = [false, false, false,
           false, false, false, 
           false, false, false]
-    # threshold = [ (25, 15), (30, 15), (35, 15),
-    #               (25, 20), (30, 20), (35, 20),   
-    #               (25, 25), (30, 25), (35, 25)]
-    threshold = [ (40, 15), (45, 15), (50, 15),
-                  (40, 20), (45, 20), (50, 20),   
-                  (40, 25), (45, 25), (50, 25)]
+    threshold = [ (25, 15), (30, 15), (35, 15),
+                  (25, 20), (30, 20), (35, 20),   
+                  (25, 25), (30, 25), (35, 25)]
+    # threshold = [ (40, 15), (45, 15), (50, 15),
+    #               (40, 20), (45, 20), (50, 20),   
+    #               (40, 25), (45, 25), (50, 25)]
     c = 0
     for lead, sublead in threshold:
         for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
@@ -44,6 +44,29 @@ def PtRNNdR_threshold(tree):
                 dR = vec0.DeltaR(vec1)
                 if (  dR> 0.3 and dR<3.0 ) : p1[c] =true
         c = c+1
+    
+    c = 0
+    for lead, sublead in threshold:
+        for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+            if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < lead): continue
+            for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+                if (i==j): continue
+                if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < sublead): continue
+                vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
+                vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
+                pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
+                pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
+                rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
+                rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
+                rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
+                rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
+                rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+                if (rnn): passPtRNN = true
+                else: continue
+                dR = vec0.DeltaR(vec1)
+                if (  dR> 0.3 ) : p1[c] =true
+        c = c+1
+    
     return p1 
 
 def PtHLT_threshold(tree):
