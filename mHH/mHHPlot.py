@@ -148,6 +148,82 @@ def tree_online_ptRNNdR_3525(tree):
                 indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
 
+
+def tree_online_ptRNNdR_eta_3525(tree):
+    indices = set()
+    for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+        if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < 35): continue
+        for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+            if (i==j): continue
+            if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < 25): continue
+            vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
+            passPt = true
+            pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): passPtRNN = true
+            else: continue
+            dR = vec0.DeltaR(vec1)
+            if (  dR> 0.3 ) : 
+                indices.add(tree.TrigMatched_Taus_HLTetafl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTetafl[j].Pt())
+    return indices
+
+
+def tree_online_ptRNNdR_or_3525(tree):
+    indices = set()
+    for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+        if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < 35): continue
+        for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+            if (i==j): continue
+            if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < 25): continue
+            vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
+            passPt = true
+            pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): passPtRNN = true
+            else: continue
+            dR = vec0.DeltaR(vec1)
+            if (  dR> 0.3 ) : 
+                indices.add(tree.TrigMatched_Taus_HLTetafl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTetafl[j].Pt())
+
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < 35): continue
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 25): continue
+            vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+            passPt = true
+            pt0 = tree.TrigMatched_Taus_HLTptfl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTptfl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTptfl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): passPtRNN = true
+            else: continue
+            dR = vec0.DeltaR(vec1)
+            if (  dR> 0.3 and dR <3.0) : 
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
+
+    return indices
+
+
 def tree_online_ptRNNdR_3020(tree):
     indices = set()
     for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
@@ -173,6 +249,80 @@ def tree_online_ptRNNdR_3020(tree):
                 indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
     return indices
 
+def tree_online_ptRNNdR_eta_3020(tree):
+    indices = set()
+    for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+        if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < 30): continue
+        for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+            if (i==j): continue
+            if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < 20): continue
+            vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
+            passPt = true
+            pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): passPtRNN = true
+            else: continue
+            dR = vec0.DeltaR(vec1)
+            if (  dR> 0.3 ) : 
+                indices.add(tree.TrigMatched_Taus_HLTetafl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTetafl[j].Pt())
+    return indices
+
+
+def tree_online_ptRNNdR_or_3020(tree):
+    indices = set()
+    for i in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+        if ( tree.TrigMatched_Taus_HLTetafl[i].Pt() < 30): continue
+        for  j in range(len(tree.TrigMatched_Taus_HLTetafl)) :
+            if (i==j): continue
+            if ( tree.TrigMatched_Taus_HLTetafl[j].Pt() < 20): continue
+            vec0 = tree.TrigMatched_Taus_HLTetafl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTetafl[i].Vect()
+            passPt = true
+            pt0 = tree.TrigMatched_Taus_HLTetafl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTetafl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTetafl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTetafl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTetafl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTetafl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): passPtRNN = true
+            else: continue
+            dR = vec0.DeltaR(vec1)
+            if (  dR> 0.3 ) : 
+                indices.add(tree.TrigMatched_Taus_HLTetafl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTetafl[j].Pt())
+
+    for i in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+        if ( tree.TrigMatched_Taus_HLTptfl[i].Pt() < 30): continue
+        for  j in range(len(tree.TrigMatched_Taus_HLTptfl)) :
+            if (i==j): continue
+            if ( tree.TrigMatched_Taus_HLTptfl[j].Pt() < 20): continue
+            vec0 = tree.TrigMatched_Taus_HLTptfl[j].Vect()
+            vec1 = tree.TrigMatched_Taus_HLTptfl[i].Vect()
+            passPt = true
+            pt0 = tree.TrigMatched_Taus_HLTptfl[j].Pt()
+            pt1 = tree.TrigMatched_Taus_HLTptfl[i].Pt()
+            rnn_m_0 = tree.TrigMatched_TauIDm_HLTptfl[j]
+            rnn_m_1 = tree.TrigMatched_TauIDm_HLTptfl[i]
+            rnn_l_0 = tree.TrigMatched_TauIDl_HLTptfl[j]
+            rnn_l_1 = tree.TrigMatched_TauIDl_HLTptfl[i]
+            rnn = rnn_region(pt0,pt1,rnn_m_0, rnn_m_1, rnn_l_0, rnn_l_1)
+            if (rnn): passPtRNN = true
+            else: continue
+            dR = vec0.DeltaR(vec1)
+            if (  dR> 0.3 and dR <3.0) : 
+                indices.add(tree.TrigMatched_Taus_HLTptfl[i].Pt())
+                indices.add(tree.TrigMatched_Taus_HLTptfl[j].Pt())
+
+    return indices
+
 
 def emulation_passed_taus_pt(input_root, t):
     for k in range(len(kL)):
@@ -189,7 +339,7 @@ def emulation_passed_taus_pt(input_root, t):
     hist_mHH = ROOT.TH1D("mHH", "", 150, 0, 1500)
     hist_mHH_ = ROOT.TH1D("mHH_", "", 150, 0, 1500)
 
-
+    de = 0
     for entry in entries:
         tree.GetEntry(entry)
         L1_1 = getattr(tree, "L1_J25")
@@ -223,20 +373,22 @@ def emulation_passed_taus_pt(input_root, t):
                     select = select 
                 else:
                     select = False
-        select = select and (L1_1 or L1_2)
+        # select = select and (L1_1 or L1_2)
 
         if(select):
+            de = de+1
             hist_mHH_select.Fill(tree.truthmHH*0.001, 1)
             i_ptRNNdR = tree_online_ptRNNdR_3525(tree)
             i_ptRNNdR_ = tree_online_ptRNNdR_3020(tree)
-            if L1_1:
-                if len(i_ptRNNdR) >0 :
+            i_ptRNNdR_eta = tree_online_ptRNNdR_eta_3525(tree)
+            i_ptRNNdR_eta_ = tree_online_ptRNNdR_eta_3020(tree) 
+            if true:
+                if len(i_ptRNNdR) >0 or len(i_ptRNNdR_eta) >0  :
                     hist_mHH.Fill(tree.truthmHH*0.001, 1)
-                if len(i_ptRNNdR_) >0 :
+                if len(i_ptRNNdR_) >0 or len(i_ptRNNdR_eta_) >0 :
                     hist_mHH_.Fill(tree.truthmHH*0.001, 1)                
 
-
-    # hist_print_mHH(hist_mHH, "mHH [GeV]", 100, 0, 1000 )
+    print("denominator: ", de)
     mhh = []
     mhh.append(hist_mHH_raw)
     mhh.append(hist_mHH_select)
