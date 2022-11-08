@@ -14,7 +14,7 @@ list_order=[
 r_pt = [40,0,200]
 def Tau0_r22_pt( Tau0_root, r22_root):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inTau0 = ROOT.TFile.Open( Tau0_root ,"READ")
             inr22 = ROOT.TFile.Open( r22_root ,"READ")
     
@@ -115,7 +115,7 @@ def Tau0_r22_pt( Tau0_root, r22_root):
     
 def Tau0_r22_eta( Tau0_root, r22_root):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inTau0 = ROOT.TFile.Open( Tau0_root ,"READ")
             inr22 = ROOT.TFile.Open( r22_root ,"READ")
     
@@ -213,7 +213,6 @@ def Tau0_r22_eta( Tau0_root, r22_root):
                             hlt_ratio[i+5]],
                 ["HLTeta_r22", "HLTeta_Tau0+"],
                 list_order[i], 0)
-
 
 def main(i):
     print(i)

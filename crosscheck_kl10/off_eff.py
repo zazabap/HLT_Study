@@ -10,18 +10,18 @@ list_order = [
     "Prong",
     "Delta_R",
     "leading",
-    "Subleading"
+    "Subleading",
+    "leading_eta",
+    "Subleading_eta"
 ]
 
 r_pt = [50, 0, 250]
-
+r_eta = [30, -3, 3]
 
 def tree_loop_select_pt(input_root, t):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inFile = ROOT.TFile.Open(input_root, "READ")
-        # if kL[k] == 1:
-        #     inFile = ROOT.TFile.Open(input_root, "READ")
 
     print("Start Looping ", taus[t])
     tree = inFile.Get("analysis")
@@ -46,6 +46,12 @@ def tree_loop_select_pt(input_root, t):
     hist_HLT_offhltpt_sublead_r = ROOT.TH1D(
         "HLT_offhltpt_sublead_r", "", r_pt[0], r_pt[1], r_pt[2])
     hist_HLT_offhltptdeltaR = ROOT.TH1D("HLT_offhltptdeltaR", "", 50, -1, 4)
+
+    # Get to know about the Eta distributions 
+    hist_offhltpt_eta_lead = ROOT.TH1D("offhltpt_eta_lead", "", r_eta[0], r_eta[1], r_eta[2])
+    hist_HLT_offhltpt_eta_lead = ROOT.TH1D("HLT_offhltpt_eta_lead", "", r_eta[0], r_eta[1], r_eta[2])
+    hist_offhltpt_eta_sublead = ROOT.TH1D("offhltpt_eta_sublead", "", r_eta[0], r_eta[1], r_eta[2])
+    hist_HLT_offhltpt_eta_sublead = ROOT.TH1D("HLT_offhltpt_eta_sublead", "", r_eta[0], r_eta[1], r_eta[2])
 
     # Selection+ Selection Pass HLT
     for entry in entries:
@@ -90,9 +96,13 @@ def tree_loop_select_pt(input_root, t):
                 if(i == 0):
                     hist_offhltpt_lead_r.Fill(
                         tree.Offline_Matched_Taus[0].Pt(), 1)
+                    hist_offhltpt_eta_lead.Fill(
+                        tree.Offline_Matched_Taus[0].Eta(), 1) # Also in Eta
                 if(i == 1):
                     hist_offhltpt_sublead_r.Fill(
                         tree.Offline_Matched_Taus[1].Pt(), 1)
+                    hist_offhltpt_eta_sublead.Fill(
+                        tree.Offline_Matched_Taus[1].Eta(), 1) # Also in Eta
                     vec0 = tree.Offline_Matched_Taus[0].Vect()
                     vec1 = tree.Offline_Matched_Taus[1].Vect()
                     hist_offhltptdeltaR.Fill(vec1.DeltaR(vec0))                    
@@ -109,9 +119,14 @@ def tree_loop_select_pt(input_root, t):
                         if(i == 0):
                             hist_HLT_offhltpt_lead_r.Fill(
                                 tree.Offline_Matched_Taus[0].Pt(), 1)
+                            hist_HLT_offhltpt_eta_lead.Fill(
+                                tree.Offline_Matched_Taus[0].Eta(), 1) # Also in Eta
                         if(i == 1):
                             hist_HLT_offhltpt_sublead_r.Fill(
                                 tree.Offline_Matched_Taus[1].Pt(), 1)
+                            hist_HLT_offhltpt_eta_sublead.Fill(
+                                tree.Offline_Matched_Taus[1].Eta(), 1) # Also in Eta 
+
                             vec0 = tree.Offline_Matched_Taus[0].Vect()
                             vec1 = tree.Offline_Matched_Taus[1].Vect()
                             hist_HLT_offhltptdeltaR.Fill(vec1.DeltaR(vec0))
@@ -133,15 +148,26 @@ def tree_loop_select_pt(input_root, t):
     hltoff.append(hist_HLT_offhltpt_lead_r)
     hltoff.append(hist_HLT_offhltpt_sublead_r)
 
+    hltoff.append(hist_offhltpt_eta_lead)
+    hltoff.append(hist_offhltpt_eta_sublead)
+    hltoff.append(hist_HLT_offhltpt_eta_lead)
+    hltoff.append(hist_HLT_offhltpt_eta_sublead)
+
     for i in range(5):
         hist_print_compare_ratio_eff([hltoff[i],
                             hltoff[i+5]],
                 ["Select", "HLT+Select"],
                 list_order[i], t)
 
+    for i in range(2):
+        hist_print_compare_ratio_eff([hltoff[i+10],
+                            hltoff[i+12]],
+                ["Select", "HLT+Select"],
+                list_order[i+5], t)
+
 def tree_loop_eff_pt(input_root, t):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inFile = ROOT.TFile.Open(input_root, "READ")
 
     print("Start Looping ", taus[t])
@@ -287,10 +313,9 @@ def tree_loop_eff_pt(input_root, t):
         print("Efficiency "+b[2]+"HLT/ALL", a[2]/a[0])
         print("Efficiency "+b[2]+"HLT/L1", a[2]/a[1])
 
-
 def tree_loop_eff_eta(input_root, t):
     for k in range(len(kL)):
-        if kL[k] == 10:
+        if kL[k] == 1:
             inFile = ROOT.TFile.Open(input_root, "READ")
 
     print("Start Looping ", taus[t])
@@ -453,7 +478,7 @@ def main():
     # tree_loop_eff_eta("Tau0_PassFail.root", 3)
 
     # tree_loop_select_pt("r22_Pass.root", 0)
-    tree_loop_select_pt("r22_PassFail.root", 1)
+    # tree_loop_select_pt("r22_PassFail.root", 1)
     # tree_loop_select_pt("Tau0_Pass.root", 2)
     tree_loop_select_pt("Tau0_PassFail.root", 3)
 

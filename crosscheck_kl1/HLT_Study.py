@@ -180,7 +180,7 @@ x_order = [
         "p_{T}^{#tau} Subleading",#15
         "#eta leading", #16
         "#eta Subleading",#17
-        "p_{T}^{#tau}", #18
+        "p_{T}^{#tau} [GeV]", #18
 ]
 
 def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
@@ -201,7 +201,7 @@ def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
     legend = ROOT.TLegend(l_x_min, l_y_min, l_x_max, l_y_max)
     legend.SetTextSize(0.035)
     legend.SetBorderSize(0)
-    legend.SetHeader(x_order[i_pos]+" #kappa_{#lambda}="+str(kL[0]),"C")
+    legend.SetHeader(" #kappa_{#lambda}=10","C")
     for h in range(len(hists_onhltn)):
         # legend.AddEntry(hists_onhltn[h],"Tau "+diffhlt[h]+" ("+str(int(hists_onhltn[h].GetEntries()))+")")
         legend.AddEntry(hists_onhltn[h], diffhlt[h]+"("+str(int(hists_onhltn[h].GetEntries()))+")")
@@ -592,3 +592,51 @@ def main():
 if __name__ == "__main__" :
     print("Hello, Start Ploting for HLT")
     main()
+
+
+# Page4 
+# inlcude tau0 trigger 
+# emulate the trigger selection based on trigger object
+# Highlight the dR and L1
+# HLT (tau0 trigger ) JIRA number 
+
+# h1: L1DR + ditau  (L1Topo)
+# h2: di tau 4 jets
+
+# Page 6 
+# include L1Topo and di
+# Just show one representative
+# Show
+
+# Page 7
+# 1) Test trigger (Dev menu) JIRA Number/ 
+# Plot From Javier
+# Separate into two pages
+
+# Page 8 
+# find the tau12 
+# Thanks menu experts for the prompt implementation
+# Rate estimation from HLT reprocessing
+
+# Page 8->9
+# Highlight the right two points
+# if we could have 80Hz, then the efficiency 
+# First show the numbers then the plots.
+
+# Page 9->10
+# Rate @ 2e34 [Hz]
+# withtout BDT 
+# have the same performance
+
+# Can we deploy 30 20 online
+# deploy this to delayed or main
+# Moved Already to physics menu
+
+# Page 11 
+# Remove the Additional information. 
+# Rate estimation from HLT reporocesing/ Used the 
+# Enhanced Biased sample for 
+# Remove Run-3 for incoming data taking  
+
+# Page 12 
+# m_HH

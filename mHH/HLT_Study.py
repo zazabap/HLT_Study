@@ -198,7 +198,7 @@ def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
     legend = ROOT.TLegend(l_x_min, l_y_min, l_x_max, l_y_max)
     legend.SetTextSize(0.035)
     legend.SetBorderSize(0)
-    legend.SetHeader(" #kappa_{#lambda}=10","C")
+    legend.SetHeader(" #kappa_{#lambda}=1","C")
     for h in range(len(hists_onhltn)):
         # legend.AddEntry(hists_onhltn[h],"Tau "+diffhlt[h]+" ("+str(int(hists_onhltn[h].GetEntries()))+")")
         legend.AddEntry(hists_onhltn[h], diffhlt[h]+"("+str(int(hists_onhltn[h].GetEntries()))+")")

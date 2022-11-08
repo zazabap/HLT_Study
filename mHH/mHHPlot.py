@@ -407,6 +407,98 @@ def emulation_passed_taus_pt(input_root, t):
                 "p_T", t)
 
 
+def pass_fail(input_root, t):
+    for k in range(len(kL)):
+        if kL[k] == 1:
+            inFile = ROOT.TFile.Open(input_root, "READ")
+
+    print("Start Looping ", taus[t])
+    tree = inFile.Get("analysis")
+    entries = range(tree.GetEntries())
+
+    # This is the plot for mHH 
+    hist_mHH_raw = ROOT.TH1D("mHH_raw", "", 150, 0, 1500)
+    hist_mHH_select = ROOT.TH1D("mHH_select", "", 150, 0, 1500)
+    hist_mHH = ROOT.TH1D("mHH", "", 150, 0, 1500)
+    hist_mHH_ = ROOT.TH1D("mHH_", "", 150, 0, 1500)
+
+    # pass fail mHH 
+    hist_mHH_pf = ROOT.TH1D("mHH_pf", "", 150, 0, 1500)
+
+
+    de = 0
+    for entry in entries:
+        tree.GetEntry(entry)
+        L1_1 = getattr(tree, "L1_J25")
+        L1_2 = getattr(tree, "L1_ETA25")
+        # Bit confused about this point of trigger use
+        if taus[t] == "r22_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "r22_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_r22")
+            HLT = "HLT_J25_r22"
+        elif taus[t] == "Tau0_Pass":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J25_Tau0"
+        elif taus[t] == "Tau0_PassFail":
+            HLT_1 = getattr(tree, "HLT_J25_Tau0")
+            HLT = "HLT_J25_Tau0"
+
+        # Selection
+        hist_mHH_raw.Fill(tree.truthmHH*0.001, 1)
+        select = True
+        select = select and (len(tree.Offline_Matched_Taus) >= 2)
+        if(select):
+            select = select and (tree.Offline_Matched_Taus[0].Pt() > 20)
+            select = select and (tree.Offline_Matched_Taus[1].Pt() > 12)
+        if(len(tree.Off_Matched_TauIDl)<2): continue
+        for i in range(len(tree.Off_Matched_TauIDl)):
+                # print(tree.Off_Matched_TauIDl[i])
+                if(tree.Off_Matched_TauIDl[0] == True
+                 and tree.Off_Matched_TauIDl[1] == True):
+                    select = select 
+                else:
+                    select = False
+        # select = select and (L1_1 or L1_2)
+
+        if(select):
+            de = de+1
+            hist_mHH_select.Fill(tree.truthmHH*0.001, 1)
+            i_ptRNNdR = tree_online_ptRNNdR_3525(tree)
+            i_ptRNNdR_ = tree_online_ptRNNdR_3020(tree)
+            i_ptRNNdR_eta = tree_online_ptRNNdR_eta_3525(tree)
+            i_ptRNNdR_eta_ = tree_online_ptRNNdR_eta_3020(tree) 
+            if true:
+                if len(i_ptRNNdR) >0 or len(i_ptRNNdR_eta) >0  :
+                    hist_mHH.Fill(tree.truthmHH*0.001, 1)
+                if len(i_ptRNNdR_) >0 or len(i_ptRNNdR_eta_) >0 :
+                    hist_mHH_.Fill(tree.truthmHH*0.001, 1)  
+                if len(i_ptRNNdR_) >0 or len(i_ptRNNdR_eta_) >0:
+                    if len(i_ptRNNdR) <=0 and len(i_ptRNNdR_eta) <=0:
+                        hist_mHH_pf.Fill(tree.truthmHH*0.001, 1)
+
+    print("denominator: ", de)
+    mhh = []
+    # mhh.append(hist_mHH_raw)
+    # mhh.append(hist_mHH_select)
+    mhh.append(hist_mHH_)
+    mhh.append(hist_mHH)
+    mhh.append(hist_mHH_pf)
+
+
+    mhh_r = []
+    mhh_r.append(hist_mHH_)
+    mhh_r.append(hist_mHH)
+
+    hist_print_compare( mhh,
+                ["30 20","35 25", "Diff"],
+                "p_T", t)
+
+    hist_print_compare_ratio( mhh_r,
+                ["30 20","35 25"],
+                "p_T", t)
+
 
 def posleg_(pos_x, pos_y, items):
     global l_x_min, l_x_max, l_y_min, l_y_max
@@ -468,6 +560,7 @@ def hist_print_mHH(hist, x_label, x_div, x_min, x_max):
 
 if __name__ == "__main__" :
     print("Hello, Start Plotting for Emulation study")
-    emulation_passed_taus_pt("kl10.root", 3)
+    pass_fail("kl1.root", 3)
+    # emulation_passed_taus_pt("kl10.root", 3)
 
     # main(sys.argv[1])

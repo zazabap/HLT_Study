@@ -27,9 +27,9 @@ ROOT.gROOT.ForceStyle()
 
 taus = ["passfail","pass"]
 taus = ["r22_Pass", "r22_PassFail", "Tau0_Pass", "Tau0_PassFail"]
-color = [ROOT.kBlack, ROOT.kRed, ROOT.kBlue, ROOT.kGreen]
+color = [ROOT.kBlack,  ROOT.kBlue, ROOT.kGreen,ROOT.kViolet, ROOT.kRed]
 kL = [1,10]
-kL = [10]
+kL = [1]
 printer = 5000
 
 def posleg(pos_x, pos_y, items):
@@ -136,6 +136,9 @@ list_order = [
         "Delta_R", #13
         "leading", #14
         "Subleading", #15
+        "leading_eta",  #16
+        "Subleading_eta", #17
+        "p_T" #18
 ]
 
 leg_pos =[
@@ -154,6 +157,9 @@ leg_pos =[
         ["L", "U", 4], #13
         ["R", "U", 4], #14
         ["R", "U", 4], #15
+        ["C", "D", 4], #16
+        ["C", "D", 4], #17
+        ["R", "U", 4], #18
 ]
 
 x_order = [
@@ -172,6 +178,9 @@ x_order = [
         "#Delta R", #13
         "p_{T}^{#tau} leading", #14
         "p_{T}^{#tau} Subleading",#15
+        "#eta leading", #16
+        "#eta Subleading",#17
+        "p_{T}^{#tau} [GeV]", #18
 ]
 
 def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
@@ -185,14 +194,14 @@ def hist_print_compare(hists_onhltn, diffhlt, x_label, t):
         hists_onhltn[h].Draw("same")
         hists_onhltn[h].SetLineColor( color[h])
         hists_onhltn[h].SetLineWidth(2)
-        hists_onhltn[h].SetTitle(";"+x_order[i_pos]+"; Number of online events")
+        hists_onhltn[h].SetTitle(";"+x_order[i_pos]+"; Number of online #tau")
         hists_onhltn[h].GetYaxis().SetTitleOffset(1.05)
         hists_onhltn[h].SetMinimum(0.1)
     posleg( leg_pos[i_pos][0], leg_pos[i_pos][1], leg_pos[i_pos][2])
     legend = ROOT.TLegend(l_x_min, l_y_min, l_x_max, l_y_max)
     legend.SetTextSize(0.035)
     legend.SetBorderSize(0)
-    legend.SetHeader(x_order[i_pos]+" #kappa_{#lambda}="+str(kL[0]),"C")
+    legend.SetHeader(" #kappa_{#lambda}=10","C")
     for h in range(len(hists_onhltn)):
         # legend.AddEntry(hists_onhltn[h],"Tau "+diffhlt[h]+" ("+str(int(hists_onhltn[h].GetEntries()))+")")
         legend.AddEntry(hists_onhltn[h], diffhlt[h]+"("+str(int(hists_onhltn[h].GetEntries()))+")")
@@ -227,13 +236,13 @@ def createRatio(h1, h2, min, max):
     h3.SetMinimum(min)
     h3.SetMaximum(max)
     # Set up plot for markers and errors
-    # h3.Sumw2()
-    # h3.SetStats(0)
+    h3.Sumw2()
+    h3.SetStats(0)
     h3.Divide(h2)
  
     # Adjust y-axis settings
     y = h3.GetYaxis()
-    y.SetTitle("ratio r22/Tau0 ") 
+    y.SetTitle("emu/emu") 
     y.SetNdivisions(6)
     y.SetTitleSize(40)
     y.SetTitleFont(43)
@@ -302,7 +311,7 @@ def hist_print_compare_ratio_eff(hists_onhltn, diffhlt, x_label, t):
 def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     c, pad1, pad2 = createCanvasPads()
     pad1.cd()
-    pad1.SetLogy()
+    # pad1.SetLogy()
     i_pos = list_order.index(x_label)
     if (x_label == "Delta_R" or 
         x_label == "leading" or 
@@ -340,14 +349,18 @@ def hist_print_compare_ratio(hists_onhltn, diffhlt, x_label, t):
     legend.Draw("same")
     
     pad1.Update()
-    h3 = createRatio(hists_onhltn[0],hists_onhltn[1],0.7, 1.1)
+    h3 = createRatio(hists_onhltn[0],hists_onhltn[1],0.5, 1.1)
     x = h3.GetXaxis()
     x.SetTitle(x_order[i_pos])
     pad2.cd()
     h3.Draw("p")
 
-    c.Print(taus[t]+"_"+x_label+".png")
+    # c.Print(taus[t]+"_"+x_label+".png")
+    c.Print(x_label+".png")
     c.Close()
+
+def hist_efficiency_gain( ):
+    print("Done Efficiency Gain")
 
 def tree_loop_deltaR( input_root, t):
     for k in range(len(kL)):
@@ -560,6 +573,9 @@ def tree_loop_hltpt( input_root, t ):
         print("Efficiency eta/Off",a[2]/a[0])
         print("Efficiency eta/pt", a[2]/a[1])
 
+##############Some Graph for Calculate Percentage Gain##############################################
+
+    
 
 def main():
     #tree_loop_deltaR("r22_Pass.root", 0)
@@ -576,3 +592,51 @@ def main():
 if __name__ == "__main__" :
     print("Hello, Start Ploting for HLT")
     main()
+
+
+# Page4 
+# inlcude tau0 trigger 
+# emulate the trigger selection based on trigger object
+# Highlight the dR and L1
+# HLT (tau0 trigger ) JIRA number 
+
+# h1: L1DR + ditau  (L1Topo)
+# h2: di tau 4 jets
+
+# Page 6 
+# include L1Topo and di
+# Just show one representative
+# Show
+
+# Page 7
+# 1) Test trigger (Dev menu) JIRA Number/ 
+# Plot From Javier
+# Separate into two pages
+
+# Page 8 
+# find the tau12 
+# Thanks menu experts for the prompt implementation
+# Rate estimation from HLT reprocessing
+
+# Page 8->9
+# Highlight the right two points
+# if we could have 80Hz, then the efficiency 
+# First show the numbers then the plots.
+
+# Page 9->10
+# Rate @ 2e34 [Hz]
+# withtout BDT 
+# have the same performance
+
+# Can we deploy 30 20 online
+# deploy this to delayed or main
+# Moved Already to physics menu
+
+# Page 11 
+# Remove the Additional information. 
+# Rate estimation from HLT reporocesing/ Used the 
+# Enhanced Biased sample for 
+# Remove Run-3 for incoming data taking  
+
+# Page 12 
+# m_HH
